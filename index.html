@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>betnomer.ru - Подбираем номера</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const bg = document.createElement('div');
+    bg.className = 'particle-bg';
+    
+    for (let i = 0; i < 150; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+   
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${Math.random() * 100}%`;
+   
+        const size = 0.5 + Math.random() * 2;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+    
+        particle.style.animationDelay = `${Math.random() * 3}s`;
+      
+        particle.style.opacity = 0.2 + Math.random() * 0.5;
+        
+        bg.appendChild(particle);
+    }
+    
+    document.body.appendChild(bg);
+    
+    const hero = document.querySelector('.hero');
+    window.addEventListener('mousemove', (e) => {
+        const x = (e.clientX / window.innerWidth) * 20 - 10;
+        const y = (e.clientY / window.innerHeight) * 20 - 10;
+        hero.style.transform = `translate(${x}px, ${y}px)`;
+    });
+});
+</script>
+<body>
+    <div class="space-bg"></div>
+  
+    <div class="main-container">
+        <header class="header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo-section">
+                        <h1 class="logo">betnomer.ru</h1>
+                        <p class="logo-subtitle">ПОДБИРАЕМ НОМЕРА</p>
+                    </div>
+                    <nav class="nav">
+                        <a href="#numbers" class="nav-link">Номера</a>
+                        
+                        <a href="#tariffs" class="nav-link">Тарифы</a>
+                      
+                        <a href="#contacts" class="nav-link">Контакты</a>
+                    </nav>
+                    
+                    <button class="order-btn" id="orderBtn">Заказать</button>
+                </div>
+            </div>
+        </header>
+
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h2 class="hero-title">УДАЧНЫЕ НОМЕРА <br> ВЫГОДНЫЕ ТАРИФЫ</h2>
+                    <p class="hero-subtitle">
+                        подбираем красивые номера и лучшие тарифы <br>в ведущих мобильных операторах
+                        <!-- ПОДБИРАЕМ КРАСИВЫЕ НОМЕРА И ПОДБИРАЕМ ЛУЧШИЕ ТАРИФЫ
+                        В ВЕДУЩИХ МОБИЛЬНЫХ ОПЕРАТОРАХ -->
+                    </p>
+                    
+                    
+                    <div class="search-section">
+                        <div class="search-box">
+                            <input type="text" class="search-input" placeholder="+7 (000) 000-00-00" id="phoneInput">
+                            <button class="search-btn" id="searchBtn">
+                                <span class="btn-text">ВВЕСТИ</span>
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="tags">
+                        <span class="tag">Зеркальные</span>
+                        <span class="tag">Повторяющиеся</span>
+                        <span class="tag">Красивые</span>
+                        <span class="tag">Серебряные</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="numbers-section" id="numbers">
+            <div class="container">
+                <h2 class="section-title">НОМЕРА</h2>
+                
+                <div class="numbers-container">
+                    <div class="numbers-grid" id="numbersGrid">
+                    </div>
+                </div>
+            
+                <div class="view-all-container">
+                    <button class="view-all-btn" id="viewAllBtn">
+                        <span>СМОТРЕТЬ ВСЕ НОМЕРА</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="tariffs-section" id="tariffs">
+            <div class="container">
+                <h2 class="section-title">ТАРИФЫ</h2>
+          
+                <div class="tariffs-wrapper">
+                    <button class="slider-nav-btn prev-btn" id="prevTariff">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    
+                    <div class="tariffs-container">
+                        <div class="tariffs-slider" id="tariffsSlider">
+                        </div>
+                    </div>
+                    
+                    <button class="slider-nav-btn next-btn" id="nextTariff">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                
+
+                <div class="pick-tariff-container">
+                    <button class="pick-tariff-btn" id="pickTariffBtn">ПОДОБРАТЬ ТАРИФ</button>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer" id="contacts">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-main">
+                        <div class="footer-logo">
+                            <h2 class="logo">betnomer.ru</h2>
+                            <p class="footer-subtitle">подбираем номера</p>
+                           
+                        </div>
+                        
+                        <div class="footer-info">
+                            <a href="tel:+78001234567" class="phone-link">
+                                <i class="fas fa-phone"></i>
+                                +7 (000) 123-45-67
+                            </a>
+                            <a href="mailto:info@bestnomer.ru" class="email-link">
+                                <i class="fas fa-envelope"></i>
+                                info@betnomer.ru
+                            </a>
+                            
+                        </div>
+                        
+                        <div class="social-links">
+                            <a href="https://t.me/bestnomer" target="_blank" class="social-link telegram" title="Telegram">
+                                <i class="fab fa-telegram"></i>
+                            </a>
+                            <a href="https://wa.me/79001234567" target="_blank" class="social-link whatsapp" title="WhatsApp">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                            <a href="viber://chat?number=79001234567" class="social-link viber" title="Viber">
+                                <i class="fab fa-viber"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="footer-bottom">
+                        <!-- <button class="callback-btn" id="callbackBtn">
+                            <i class="fas fa-phone-alt"></i>
+                            Заказать обратный звонок
+                        </button> -->
+                        <p class="copyright">© 2026 betnomer.ru. Все права защищены.</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
