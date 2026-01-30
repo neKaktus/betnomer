@@ -65,7 +65,7 @@ body {
     padding: 0 24px;
 }
 
-/* HEADER */
+/* HEADER - Десктоп */
 .header {
     padding: 20px 0;
     background: rgba(26, 21, 15, 0.98);
@@ -506,7 +506,7 @@ body {
     transform: translateY(-2px);
 }
 
-/* TARIFFS SECTION */
+/* TARIFFS SECTION - ИСПРАВЛЕННЫЙ ДЛЯ МОБИЛЬНЫХ */
 .tariffs-section {
     padding: 60px 0;
     background: rgba(26, 21, 15, 0.8);
@@ -527,13 +527,13 @@ body {
 .tariffs-wrapper {
     position: relative;
     margin-bottom: 70px;
-    padding: 0 70px;
+    padding: 0;
     user-select: none;
 }
 
 .tariffs-container {
-    overflow: hidden;
-    border-radius: 25px;
+    overflow: visible;
+    border-radius: 0;
     position: relative;
     touch-action: pan-y;
 }
@@ -864,20 +864,21 @@ body {
     opacity: 1;
 }
 
+/* Обычный текст для 24/7 без эффектов */
 .hours-24 {
     font-size: 24px;
     font-weight: 800;
-    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--text-light);
     display: inline-block;
     margin-top: 5px;
-    filter: drop-shadow(0 2px 5px rgba(255, 215, 0, 0.3));
     letter-spacing: 1px;
+    background: none;
+    -webkit-text-fill-color: var(--text-light);
+    filter: none;
+    text-shadow: none;
 }
 
-/* OPERATORS SECTION */
+/* OPERATORS SECTION - ШАХМАТНЫЙ ПОРЯДОК НА МОБИЛЬНЫХ */
 .operators-section {
     text-align: center;
     padding: 40px 0;
@@ -1162,6 +1163,15 @@ body {
         font-size: 15px;
         max-width: 220px;
     }
+    
+    .operators-logos {
+        gap: 30px;
+    }
+    
+    .operator-logo {
+        min-width: 160px;
+        height: 90px;
+    }
 }
 
 @media (max-width: 1200px) {
@@ -1189,6 +1199,10 @@ body {
     
     .tariffs-wrapper {
         padding: 0 50px;
+    }
+    
+    .operators-logos {
+        gap: 25px;
     }
 }
 
@@ -1247,67 +1261,94 @@ body {
         height: 50px;
         font-size: 18px;
     }
+    
+    .operators-logos {
+        gap: 20px;
+    }
+    
+    .operator-logo {
+        min-width: 140px;
+        height: 80px;
+        padding: 15px 20px;
+    }
 }
 
+/* МОБИЛЬНАЯ ВЕРСИЯ - ИСПРАВЛЕННАЯ */
 @media (max-width: 768px) {
     .container {
         padding: 0 16px;
     }
     
-    /* HEADER FIX */
+    /* HEADER - ЦЕНТРИРОВАННЫЙ ЛОГОТИП И КНОПКА */
     .header {
-        padding: 15px 0;
+        padding: 10px 0;
+        text-align: center;
     }
     
     .header-content {
-        flex-wrap: nowrap;
-        justify-content: space-between;
+        display: flex;
+        flex-direction: column;
         align-items: center;
-        gap: 15px;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        flex-wrap: nowrap;
     }
     
     .logo-section {
-        flex: 0 1 auto;
-        min-width: 0;
-        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        width: 100%;
+        gap: 5px;
+        margin-bottom: 10px;
     }
     
     .logo-icon {
-        width: 40px !important;
-        height: 40px !important;
-        font-size: 28px !important;
-        flex-shrink: 0;
+        width: 50px !important;
+        height: 50px !important;
+        font-size: 40px !important;
+        margin: 0 auto;
     }
     
     .logo {
-        font-size: 20px !important;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        font-size: 24px !important;
+        text-align: center;
+        width: 100%;
+        margin-top: 5px;
+        background: linear-gradient(135deg, #FFF8E1 0%, #FFD700 50%, #DAA520 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
     
     .logo-subtitle {
-        font-size: 8px !important;
-        letter-spacing: 1px !important;
-        margin-top: 4px;
+        font-size: 10px !important;
+        letter-spacing: 2px !important;
+        margin-top: 2px;
+        text-align: center;
+        width: 100%;
     }
     
     .nav {
         display: none;
     }
     
+    /* КНОПКА ЗАКАЗАТЬ - НЕ НА ВСЮ ШИРИНУ */
     .order-btn {
-        display: flex !important;
-        padding: 10px 16px !important;
-        font-size: 12px !important;
-        white-space: nowrap;
-        min-width: auto;
-        flex-shrink: 0;
+        width: auto !important;
+        max-width: 200px;
+        padding: 12px 30px !important;
+        font-size: 14px !important;
+        margin: 10px auto 0;
+        display: block;
     }
     
     /* HERO */
     .hero {
-        padding: 80px 0 50px;
+        padding: 60px 0 30px;
     }
     
     .hero-title {
@@ -1366,56 +1407,55 @@ body {
         min-height: 80px;
     }
     
-    /* TARIFFS SLIDER - MOBILE FIX */
-    .tariffs-slider {
-        gap: 20px;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scroll-snap-type: x mandatory;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-        padding: 10px 0;
-    }
-    
-    .tariffs-slider::-webkit-scrollbar {
-        display: none;
-    }
-    
-    .tariff-card {
-        flex: 0 0 calc(100% - 40px);
-        min-width: calc(100% - 40px);
-        margin: 0 20px;
-        scroll-snap-align: center;
+    /* TARIFFS - ИСПРАВЛЕНИЕ ПРОБЛЕМЫ СО СЛАЙДЕРОМ */
+    .tariffs-section {
+        padding: 40px 0;
     }
     
     .tariffs-wrapper {
-        padding: 0;
+        padding: 0 !important;
         margin-bottom: 40px;
-        position: relative;
+        width: 100%;
     }
     
     .tariffs-container {
-        overflow: visible;
-        border-radius: 0;
-        padding: 10px 0;
+        width: 100%;
+        overflow: visible !important;
     }
     
+    /* Показываем все тарифы в один ряд на мобильных */
+    .tariffs-slider {
+        display: flex;
+        flex-direction: column !important;
+        gap: 20px;
+        transform: none !important;
+        overflow: visible !important;
+        padding: 0;
+        width: 100%;
+    }
+    
+    .tariff-card {
+        flex: 1 1 auto !important;
+        min-width: 100% !important;
+        margin: 0 !important;
+        scroll-snap-align: none !important;
+        transform: none !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        display: flex !important;
+    }
+    
+    /* Скрываем элементы слайдера на мобильных */
     .slider-nav-btn {
-        display: none;
-    }
-    
-    .swipe-hint {
-        display: block;
+        display: none !important;
     }
     
     .slider-indicators {
-        margin-top: 25px;
-        gap: 10px;
+        display: none !important;
     }
     
-    .slider-indicator {
-        width: 10px;
-        height: 10px;
+    .swipe-hint {
+        display: none !important;
     }
     
     /* FEATURES */
@@ -1425,7 +1465,7 @@ body {
     
     .features-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 40px 20px;
+        gap: 30px 20px;
         margin-bottom: 40px;
     }
     
@@ -1434,61 +1474,84 @@ body {
     }
     
     .feature-icon-box {
-        width: 90px;
-        height: 90px;
+        width: 80px;
+        height: 80px;
         margin-bottom: 20px;
     }
     
     .feature-icon-box .material-icons {
-        font-size: 60px;
+        font-size: 50px;
     }
     
     .feature-title {
-        font-size: 16px;
+        font-size: 14px;
         margin-bottom: 10px;
     }
     
     .feature-desc {
-        font-size: 13px;
-        max-width: 180px;
+        font-size: 12px;
+        max-width: 150px;
     }
     
     .hours-24 {
-        font-size: 20px;
+        font-size: 18px;
     }
     
-    /* OPERATORS */
+    /* OPERATORS - ШАХМАТНЫЙ ПОРЯДОК НА МОБИЛЬНЫХ */
     .operators-title {
-        font-size: 18px;
-        margin-bottom: 30px;
+        font-size: 16px;
+        margin-bottom: 20px;
     }
     
     .operators-logos {
-        gap: 20px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        max-width: 320px;
+        margin: 0 auto;
+    }
+    
+    /* Делаем шахматный порядок - сдвигаем второй элемент */
+    .operators-logos .operator-logo:nth-child(2) {
+        transform: translateX(20px);
+    }
+    
+    /* Делаем шахматный порядок для 3 элементов */
+    .operators-logos .operator-logo:nth-child(3) {
+        grid-column: span 2;
+        justify-self: center;
+        transform: translateX(-10px);
+        width: calc(100% - 40px);
     }
     
     .operator-logo {
-        min-width: 140px;
-        height: 80px;
-        padding: 15px 20px;
+        width: 100%;
+        height: 70px;
+        padding: 10px 15px;
+        min-width: auto;
+        margin: 0;
     }
     
     .operator-logo-img {
-        max-height: 55px;
+        max-height: 40px;
+        max-width: 100%;
     }
     
     /* FOOTER */
     .footer {
-        padding: 40px 0 30px;
+        padding: 30px 0 20px;
     }
     
     .footer-content {
-        gap: 40px;
+        gap: 30px;
     }
     
     .footer-main {
         grid-template-columns: 1fr;
-        gap: 30px;
+        gap: 25px;
         text-align: center;
     }
     
@@ -1533,18 +1596,18 @@ body {
     .view-all-btn, .pick-tariff-btn {
         width: 100%;
         max-width: 280px;
-        padding: 18px 30px;
+        padding: 16px 25px;
         font-size: 14px;
     }
     
-    .search-btn, .view-all-btn, .pick-tariff-btn, .order-btn, .callback-btn {
+    .search-btn, .view-all-btn, .pick-tariff-btn, .callback-btn {
         width: 100%;
         justify-content: center;
         padding: 14px 20px;
         font-size: 14px;
     }
     
-    .nav-link, .tag, .order-btn, .select-number-btn, 
+    .nav-link, .tag, .select-number-btn, 
     .connect-tariff-btn, .slider-indicator {
         min-height: 44px;
         display: inline-flex;
@@ -1555,13 +1618,13 @@ body {
 
 @media (max-width: 480px) {
     .hero-title {
-        font-size: 30px;
+        font-size: 28px;
         margin-bottom: 15px;
     }
     
     .hero-subtitle {
-        font-size: 15px;
-        margin-bottom: 25px;
+        font-size: 14px;
+        margin-bottom: 20px;
         padding: 10px;
     }
     
@@ -1571,68 +1634,65 @@ body {
     }
     
     .section-title {
-        font-size: 28px;
-        margin-bottom: 25px;
+        font-size: 26px;
+        margin-bottom: 20px;
     }
     
     .phone-number {
-        font-size: 20px;
+        font-size: 18px;
         letter-spacing: 1.5px;
         padding: 15px;
     }
     
     .operator-name {
-        font-size: 22px;
+        font-size: 20px;
     }
     
     .tariff-price {
-        font-size: 32px;
+        font-size: 28px;
     }
     
     .tariff-info {
-        font-size: 15px;
+        font-size: 14px;
         margin: 15px 0;
     }
     
     .tags {
         gap: 8px;
-        margin-top: 40px;
+        margin-top: 30px;
     }
     
     .tag {
-        padding: 10px 16px;
-        font-size: 12px;
+        padding: 8px 16px;
+        font-size: 11px;
     }
     
     .logo {
-        font-size: 18px;
+        font-size: 22px !important;
     }
     
     .footer-main {
-        gap: 25px;
+        gap: 20px;
     }
     
     .social-link {
-        width: 48px;
-        height: 48px;
-        font-size: 20px;
+        width: 44px;
+        height: 44px;
+        font-size: 18px;
     }
     
     .tariff-card {
-        flex: 0 0 calc(100% - 30px);
-        min-width: calc(100% - 30px);
-        margin: 0 15px;
         padding: 20px;
     }
     
     .features-icons-section {
-        padding: 40px 0 30px;
+        padding: 25px 0 20px;
     }
     
     .features-grid {
         grid-template-columns: 1fr;
-        gap: 35px;
-        max-width: 300px;
+        gap: 25px;
+        max-width: 280px;
         margin: 0 auto 30px;
     }
     
@@ -1641,81 +1701,58 @@ body {
     }
     
     .feature-icon-box {
-        width: 85px;
-        height: 85px;
-        margin-bottom: 18px;
+        width: 70px;
+        height: 70px;
+        margin-bottom: 15px;
     }
     
     .feature-icon-box .material-icons {
-        font-size: 55px;
+        font-size: 45px;
     }
     
     .feature-title {
-        font-size: 17px;
+        font-size: 15px;
     }
     
     .feature-desc {
-        font-size: 14px;
-        max-width: 250px;
+        font-size: 13px;
+        max-width: 200px;
     }
     
     .hours-24 {
-        font-size: 22px;
+        font-size: 20px;
     }
     
+    /* OPERATORS - АДАПТИВНОСТЬ ДЛЯ МАЛЕНЬКИХ ЭКРАНОВ */
     .operators-logos {
-        flex-direction: column;
-        gap: 15px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        max-width: 280px;
+    }
+    
+    .operators-logos .operator-logo:nth-child(2) {
+        transform: translateX(15px);
+    }
+    
+    .operators-logos .operator-logo:nth-child(3) {
+        transform: translateX(-7px);
+        width: calc(100% - 30px);
     }
     
     .operator-logo {
-        width: 100%;
-        max-width: 200px;
-        height: 70px;
+        height: 60px;
+        padding: 8px 12px;
     }
     
     .operator-logo-img {
-        max-height: 45px;
-    }
-}
-
-/* SWIPE ANIMATION */
-@media (max-width: 768px) {
-    .tariffs-container {
-        cursor: grab;
-        padding: 20px 0;
+        max-height: 35px;
     }
     
-    .tariffs-container:active {
-        cursor: grabbing;
-    }
-    
-    .swipe-hint {
-        font-size: 13px;
-        margin-top: 10px;
-    }
-    
-    .slider-indicator.active::after {
-        content: '';
-        position: absolute;
-        top: -2px;
-        left: -2px;
-        right: -2px;
-        bottom: -2px;
-        border-radius: 50%;
-        border: 2px solid var(--primary-color);
-        animation: pulse 2s infinite;
-    }
-    
-    @keyframes pulse {
-        0%, 100% {
-            transform: scale(1);
-            opacity: 0.7;
-        }
-        50% {
-            transform: scale(1.1);
-            opacity: 1;
-        }
+    /* Кнопка заказать еще компактнее */
+    .order-btn {
+        max-width: 180px;
+        padding: 10px 20px !important;
+        font-size: 13px !important;
     }
 }
 
