@@ -13,6 +13,14 @@ let currentNumbersDisplayed = 4;
 let currentTariffIndex = 0;
 let tariffsPerView = 3;
 
+// Добавляем переменные для свайпа
+let isMobile = false;
+let startX = 0;
+let currentTranslate = 0;
+let prevTranslate = 0;
+let isDragging = false;
+let animationID;
+
 const TELEGRAM_USERNAME = "ne_kaktus";
 
 function sendToTelegram(message) {
@@ -22,7 +30,10 @@ function sendToTelegram(message) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  
+    // Проверяем мобильное устройство
+    checkMobile();
+    updateSwipeHint();
+    
     renderNumbers();
     
     viewAllBtn.addEventListener('click', function() {
@@ -38,98 +49,207 @@ document.addEventListener('DOMContentLoaded', function() {
     updateTariffsSlider();
     updateNavButtons();
     
- 
-    prevTariffBtn.addEventListener('click', function() {
-        if (currentTariffIndex > 0) {
-            currentTariffIndex--;
-            updateTariffsSlider();
-            updateNavButtons();
-        }
-    });
+    // Добавляем обработчики свайпа на мобильных
+    if (tariffsSlider) {
+        tariffsSlider.addEventListener('touchstart', touchStart);
+        tariffsSlider.addEventListener('touchmove', touchMove);
+        tariffsSlider.addEventListener('touchend', touchEnd);
+        tariffsSlider.addEventListener('mousedown', touchStart);
+        tariffsSlider.addEventListener('mousemove', touchMove);
+        tariffsSlider.addEventListener('mouseup', touchEnd);
+        tariffsSlider.addEventListener('mouseleave', touchEnd);
+    }
+    
+    // Кнопки навигации
+    if (prevTariffBtn) {
+        prevTariffBtn.addEventListener('click', function() {
+            if (currentTariffIndex > 0) {
+                currentTariffIndex--;
+                updateTariffsSlider();
+                updateNavButtons();
+            }
+        });
+    }
 
-    nextTariffBtn.addEventListener('click', function() {
-        const maxIndex = tariffsData.length - tariffsPerView;
-        if (currentTariffIndex < maxIndex) {
-            currentTariffIndex++;
-            updateTariffsSlider();
-            updateNavButtons();
-        }
-    });
+    if (nextTariffBtn) {
+        nextTariffBtn.addEventListener('click', function() {
+            const maxIndex = tariffsData.length - tariffsPerView;
+            if (currentTariffIndex < maxIndex) {
+                currentTariffIndex++;
+                updateTariffsSlider();
+                updateNavButtons();
+            }
+        });
+    }
 
     // Поиск
-    searchBtn.addEventListener('click', function() {
-        const phoneNumber = phoneInput.value.trim();
-        if (!phoneNumber || phoneNumber === '+7 (') {
-            phoneInput.style.borderColor = 'red';
-            setTimeout(() => phoneInput.style.borderColor = '', 1000);
-            return;
-        }
-        
-        sendToTelegram(`Поиск номера: ${phoneNumber}`);
-        phoneInput.value = '';
-    });
+    if (searchBtn && phoneInput) {
+        searchBtn.addEventListener('click', function() {
+            const phoneNumber = phoneInput.value.trim();
+            if (!phoneNumber || phoneNumber === '+7 (') {
+                phoneInput.style.borderColor = 'red';
+                setTimeout(() => phoneInput.style.borderColor = '', 1000);
+                return;
+            }
+            
+            sendToTelegram(`Поиск номера: ${phoneNumber}`);
+            phoneInput.value = '';
+        });
 
-    phoneInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            searchBtn.click();
-        }
-    });
+        phoneInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchBtn.click();
+            }
+        });
 
-    phoneInput.addEventListener('input', function(e) {
-        let value = this.value.replace(/\D/g, '');
-        
-        if (value.length > 0) value = '+7 (' + value;
-        if (value.length > 7) value = value.slice(0, 7) + ') ' + value.slice(7);
-        if (value.length > 12) value = value.slice(0, 12) + '-' + value.slice(12);
-        if (value.length > 15) value = value.slice(0, 15) + '-' + value.slice(15, 17);
-        
-        this.value = value;
-    });
+        phoneInput.addEventListener('input', function(e) {
+            let value = this.value.replace(/\D/g, '');
+            
+            if (value.length > 0) value = '+7 (' + value;
+            if (value.length > 7) value = value.slice(0, 7) + ') ' + value.slice(7);
+            if (value.length > 12) value = value.slice(0, 12) + '-' + value.slice(12);
+            if (value.length > 15) value = value.slice(0, 15) + '-' + value.slice(15, 17);
+            
+            this.value = value;
+        });
+    }
 
+    // Остальные кнопки
+    if (pickTariffBtn) {
+        pickTariffBtn.addEventListener('click', function() {
+            sendToTelegram('Подбор тарифа');
+        });
+    }
 
-    pickTariffBtn.addEventListener('click', function() {
-        sendToTelegram('Подбор тарифа');
-    });
+    if (orderBtn) {
+        orderBtn.addEventListener('click', function() {
+            sendToTelegram('Заказ услуги');
+        });
+    }
 
-    orderBtn.addEventListener('click', function() {
-        sendToTelegram('Заказ услуги');
-    });
-
-    callbackBtn.addEventListener('click', function() {
-        sendToTelegram('Обратный звонок');
-    });
+    if (callbackBtn) {
+        callbackBtn.addEventListener('click', function() {
+            sendToTelegram('Обратный звонок');
+        });
+    }
 
     window.addEventListener('resize', function() {
+        checkMobile();
+        updateSwipeHint();
         updateTariffsPerView();
         updateTariffsSlider();
         updateNavButtons();
+        // Сбрасываем позицию свайпа при изменении размера
+        if (!isMobile) {
+            currentTranslate = 0;
+            prevTranslate = 0;
+            tariffsSlider.style.transform = 'translateX(0)';
+        }
     });
 });
 
+// Функции для свайпа
+function checkMobile() {
+    isMobile = window.innerWidth <= 768;
+}
+
+function updateSwipeHint() {
+    const swipeHint = document.querySelector('.swipe-hint');
+    if (swipeHint) {
+        swipeHint.style.display = isMobile ? 'block' : 'none';
+    }
+}
+
+function getPositionX(event) {
+    return event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
+}
+
+function animation() {
+    setSliderPosition();
+    if (isDragging) {
+        requestAnimationFrame(animation);
+    }
+}
+
+function setSliderPosition() {
+    if (!tariffsSlider) return;
+    tariffsSlider.style.transform = `translateX(${currentTranslate}px)`;
+    tariffsSlider.style.transition = isDragging ? 'none' : 'transform 0.3s ease';
+}
+
+function touchStart(event) {
+    if (!isMobile || !tariffsSlider) return;
+    
+    event.preventDefault();
+    isDragging = true;
+    startX = getPositionX(event);
+    prevTranslate = currentTranslate;
+    animationID = requestAnimationFrame(animation);
+    tariffsSlider.style.cursor = 'grabbing';
+}
+
+function touchMove(event) {
+    if (!isDragging || !isMobile || !tariffsSlider) return;
+    
+    const currentPosition = getPositionX(event);
+    const movedBy = currentPosition - startX;
+    currentTranslate = prevTranslate + movedBy;
+}
+
+function touchEnd() {
+    if (!isMobile || !tariffsSlider) return;
+    
+    isDragging = false;
+    cancelAnimationFrame(animationID);
+    tariffsSlider.style.cursor = 'grab';
+    
+    const movedBy = currentTranslate - prevTranslate;
+    
+    // Если свайп достаточно сильный, меняем слайд
+    if (Math.abs(movedBy) > 50) {
+        if (movedBy < 0 && currentTariffIndex < tariffsData.length - tariffsPerView) {
+            currentTariffIndex++;
+        } else if (movedBy > 0 && currentTariffIndex > 0) {
+            currentTariffIndex--;
+        }
+    }
+    
+    // Сбрасываем позицию и обновляем слайдер
+    currentTranslate = 0;
+    prevTranslate = 0;
+    updateTariffsSlider();
+    updateNavButtons();
+}
+
 function renderNumbers() {
+    if (!numbersGrid) return;
     numbersGrid.innerHTML = '';
     numbersData.slice(0, currentNumbersDisplayed).forEach(number => {
         const card = document.createElement('div');
         card.className = 'number-card';
         card.innerHTML = `
-            <div class="category-label">${number.category}</div>
-            ${number.badge ? `<span class="number-badge">${number.badge}</span>` : ''}
+            <div class="card-header">
+                <span class="category-label">${number.category}</span>
+                ${number.badge ? `<span class="golden-badge">${number.badge}</span>` : ''}
+            </div>
             <div class="phone-number">${number.number}</div>
-            <button class="select-number-btn" onclick="sendToTelegram('Номер: ${number.number}')">
-                Выбрать номер
-            </button>
+            <div class="card-footer">
+                <button class="select-number-btn" onclick="sendToTelegram('Номер: ${number.number}')">
+                    Выбрать номер
+                </button>
+            </div>
         `;
         numbersGrid.appendChild(card);
     });
 }
 
-
 function renderTariffs() {
+    if (!tariffsSlider) return;
     tariffsSlider.innerHTML = '';
     tariffsData.forEach(tariff => {
         const card = document.createElement('div');
         card.className = 'tariff-card';
-        card.style.flex = `0 0 calc(${100 / tariffsPerView}% - 20px)`; // Важно!
+        card.style.flex = `0 0 calc(${100 / tariffsPerView}% - 20px)`;
         card.innerHTML = `
             <div class="operator-name">${tariff.operator}</div>
             <div class="tariff-info">${tariff.data} · ${tariff.minutes}</div>
@@ -142,17 +262,44 @@ function renderTariffs() {
     });
 }
 
-
 function updateTariffsSlider() {
-    const cardWidth = 100 / tariffsPerView;
-    const offset = -currentTariffIndex * cardWidth;
-    tariffsSlider.style.transform = `translateX(${offset}%)`;
+    if (!tariffsSlider) return;
+    
+    if (isMobile) {
+        // На мобильных используем свайп
+        const cardWidth = tariffsSlider.children[0]?.offsetWidth || 300;
+        const offset = -currentTariffIndex * (cardWidth + 20); // +20 для gap
+        currentTranslate = offset;
+        setSliderPosition();
+    } else {
+        // На десктопе используем проценты
+        const cardWidth = 100 / tariffsPerView;
+        const offset = -currentTariffIndex * cardWidth;
+        tariffsSlider.style.transform = `translateX(${offset}%)`;
+    }
+    
+    // Обновляем индикаторы
+    updateIndicators();
+}
+
+function updateIndicators() {
+    const indicators = document.querySelectorAll('.slider-indicator');
+    if (indicators.length > 0) {
+        indicators.forEach((indicator, index) => {
+            if (index === currentTariffIndex) {
+                indicator.classList.add('active');
+            } else {
+                indicator.classList.remove('active');
+            }
+        });
+    }
 }
 
 function updateNavButtons() {
+    if (!prevTariffBtn || !nextTariffBtn) return;
+    
     const maxIndex = tariffsData.length - tariffsPerView;
     
-
     if (currentTariffIndex <= 0) {
         prevTariffBtn.disabled = true;
         prevTariffBtn.style.opacity = '0.5';
@@ -174,7 +321,6 @@ function updateNavButtons() {
     }
 }
 
-
 function updateTariffsPerView() {
     const width = window.innerWidth;
     if (width < 768) {
@@ -192,3 +338,22 @@ function updateTariffsPerView() {
         currentTariffIndex = Math.max(0, maxIndex);
     }
 }
+
+// Добавляем клики по индикаторам
+document.addEventListener('DOMContentLoaded', function() {
+    const indicators = document.querySelectorAll('.slider-indicator');
+    indicators.forEach((indicator, index) => {
+        indicator.addEventListener('click', function() {
+            currentTariffIndex = index;
+            updateTariffsSlider();
+            updateNavButtons();
+        });
+    });
+});
+
+// Предотвращаем выделение текста при свайпе
+tariffsSlider?.addEventListener('selectstart', function(e) {
+    if (isMobile) {
+        e.preventDefault();
+    }
+});
