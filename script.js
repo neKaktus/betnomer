@@ -1,6 +1,7 @@
 const numbersGrid = document.getElementById('numbersGrid');
 const viewAllBtn = document.getElementById('viewAllBtn');
 const tariffsSlider = document.getElementById('tariffsSlider');
+const tariffsContainer = document.querySelector('.tariffs-container'); // Добавляем контейнер
 const prevTariffBtn = document.getElementById('prevTariff');
 const nextTariffBtn = document.getElementById('nextTariff');
 const searchBtn = document.getElementById('searchBtn');
@@ -13,6 +14,7 @@ let currentNumbersDisplayed = 4;
 let currentTariffIndex = 0;
 let tariffsPerView = 3;
 let isMobile = false;
+let isScrolling = false;
 
 const TELEGRAM_USERNAME = "ne_kaktus";
 
@@ -42,8 +44,8 @@ document.addEventListener('DOMContentLoaded', function() {
     updateTariffsSlider();
     updateNavButtons();
     
-    // Простая реализация свайпа для мобильных
-    initSimpleSwipe();
+    // Оптимизированная реализация свайпа
+    initOptimizedSwipe();
     
     // Кнопки навигации
     if (prevTariffBtn) {
@@ -127,34 +129,130 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Упрощенная реализация свайпа
-function initSimpleSwipe() {
-    if (!tariffsSlider) return;
+// Оптимизированная реализация свайпа
+function initOptimizedSwipe() {
+    if (!tariffsSlider || !tariffsContainer) return;
     
     let startX = 0;
-    let scrollLeft = 0;
+    let startY = 0;
+    let startScrollLeft = 0;
+    let startScrollTop = 0;
+    let isHorizontalMove = false;
+    let scrollTimeout = null;
     
-    tariffsSlider.addEventListener('touchstart', function(e) {
+    // Обработчик начала касания
+    const handleTouchStart = (e) => {
         if (!isMobile) return;
         
-        startX = e.touches[0].pageX - tariffsSlider.offsetLeft;
-        scrollLeft = tariffsSlider.scrollLeft;
-    });
+        isScrolling = true;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        startScrollLeft = tariffsContainer.scrollLeft;
+        startScrollTop = window.scrollY || document.documentElement.scrollTop;
+        isHorizontalMove = false;
+        
+        // Отключаем скролл страницы
+        document.body.style.overflow = 'hidden';
+        tariffsContainer.style.scrollSnapType = 'none';
+    };
     
-    tariffsSlider.addEventListener('touchmove', function(e) {
-        if (!isMobile) return;
+    // Обработчик движения
+    const handleTouchMove = (e) => {
+        if (!isMobile || !isScrolling) return;
         
         e.preventDefault();
-        const x = e.touches[0].pageX - tariffsSlider.offsetLeft;
-        const walk = (x - startX) * 2; // Умножаем для более плавного скролла
-        tariffsSlider.scrollLeft = scrollLeft - walk;
+        
+        const currentX = e.touches[0].clientX;
+        const currentY = e.touches[0].clientY;
+        const deltaX = currentX - startX;
+        const deltaY = currentY - startY;
+        
+        // Определяем, это горизонтальное или вертикальное движение
+        if (!isHorizontalMove) {
+            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 5) {
+                isHorizontalMove = true;
+            } else if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 5) {
+                isHorizontalMove = false;
+                return; // Позволяем вертикальный скролл страницы
+            }
+        }
+        
+        // Если это горизонтальное движение - скроллим карусель
+        if (isHorizontalMove) {
+            e.stopPropagation();
+            const scrollAmount = startScrollLeft - deltaX;
+            tariffsContainer.scrollLeft = scrollAmount;
+        }
+    };
+    
+    // Обработчик окончания касания
+    const handleTouchEnd = (e) => {
+        if (!isMobile) return;
+        
+        isScrolling = false;
+        document.body.style.overflow = '';
+        tariffsContainer.style.scrollSnapType = 'x mandatory';
+        
+        // Включаем привязку к ближайшей карточке
+        if (isHorizontalMove) {
+            const containerRect = tariffsContainer.getBoundingClientRect();
+            const cards = tariffsSlider.children;
+            let nearestCard = null;
+            let minDistance = Infinity;
+            
+            for (let card of cards) {
+                const cardRect = card.getBoundingClientRect();
+                const distance = Math.abs(cardRect.left - containerRect.left);
+                
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    nearestCard = card;
+                }
+            }
+            
+            if (nearestCard) {
+                const cardIndex = parseInt(nearestCard.dataset.index);
+                currentTariffIndex = cardIndex;
+                
+                // Плавная прокрутка к центру карточки
+                tariffsContainer.scrollTo({
+                    left: nearestCard.offsetLeft - (containerRect.width - nearestCard.offsetWidth) / 2,
+                    behavior: 'smooth'
+                });
+                
+                updateNavButtons();
+                updateIndicators();
+            }
+        }
+        
+        // Очищаем таймер
+        if (scrollTimeout) clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+            isHorizontalMove = false;
+        }, 300);
+    };
+    
+    // Добавляем обработчики на контейнер, а не на слайдер
+    tariffsContainer.addEventListener('touchstart', handleTouchStart, { passive: false });
+    tariffsContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
+    tariffsContainer.addEventListener('touchend', handleTouchEnd, { passive: true });
+    
+    // Предотвращаем зум страницы при касании карусели
+    tariffsContainer.addEventListener('touchstart', (e) => {
+        if (e.touches.length > 1) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+    
+    // Предотвращаем контекстное меню при долгом касании
+    tariffsContainer.addEventListener('contextmenu', (e) => {
+        if (isMobile) e.preventDefault();
     });
 }
 
 // Функции для свайпа
 function checkMobile() {
     isMobile = window.innerWidth <= 768;
-    // Обновляем количество видимых тарифов
     if (isMobile) {
         tariffsPerView = 1;
     } else if (window.innerWidth < 992) {
@@ -215,30 +313,28 @@ function renderTariffs() {
 function updateTariffsSlider() {
     if (!tariffsSlider) return;
     
-    // Для десктопа используем трансформацию
     if (!isMobile) {
+        // Для десктопа
         const cardWidthPercent = 100 / tariffsPerView;
         const offset = -currentTariffIndex * cardWidthPercent;
         tariffsSlider.style.transform = `translateX(${offset}%)`;
         tariffsSlider.style.transition = 'transform 0.3s ease';
     } else {
-        // Для мобильных просто показываем все карточки в ряд
-        // Прокрутка будет работать через CSS overflow-x: auto
-        tariffsSlider.style.transform = 'none';
-        tariffsSlider.style.transition = 'none';
-        
-        // Прокручиваем к текущему слайду
+        // Для мобильных - плавная прокрутка к центру карточки
+        const container = document.querySelector('.tariffs-container');
         const currentCard = tariffsSlider.querySelector(`[data-index="${currentTariffIndex}"]`);
-        if (currentCard) {
-            currentCard.scrollIntoView({
-                behavior: 'smooth',
-                block: 'nearest',
-                inline: 'center'
+        
+        if (container && currentCard) {
+            const containerRect = container.getBoundingClientRect();
+            const targetScroll = currentCard.offsetLeft - (containerRect.width - currentCard.offsetWidth) / 2;
+            
+            container.scrollTo({
+                left: targetScroll,
+                behavior: 'smooth'
             });
         }
     }
     
-    // Обновляем индикаторы
     updateIndicators();
 }
 
@@ -246,11 +342,7 @@ function updateIndicators() {
     const indicators = document.querySelectorAll('.slider-indicator');
     if (indicators.length > 0) {
         indicators.forEach((indicator, index) => {
-            if (index === currentTariffIndex) {
-                indicator.classList.add('active');
-            } else {
-                indicator.classList.remove('active');
-            }
+            indicator.classList.toggle('active', index === currentTariffIndex);
         });
     }
 }
@@ -260,25 +352,13 @@ function updateNavButtons() {
     
     const maxIndex = tariffsData.length - tariffsPerView;
     
-    if (currentTariffIndex <= 0) {
-        prevTariffBtn.disabled = true;
-        prevTariffBtn.style.opacity = '0.5';
-        prevTariffBtn.style.cursor = 'not-allowed';
-    } else {
-        prevTariffBtn.disabled = false;
-        prevTariffBtn.style.opacity = '1';
-        prevTariffBtn.style.cursor = 'pointer';
-    }
+    prevTariffBtn.disabled = currentTariffIndex <= 0;
+    prevTariffBtn.style.opacity = prevTariffBtn.disabled ? '0.5' : '1';
+    prevTariffBtn.style.cursor = prevTariffBtn.disabled ? 'not-allowed' : 'pointer';
     
-    if (currentTariffIndex >= maxIndex) {
-        nextTariffBtn.disabled = true;
-        nextTariffBtn.style.opacity = '0.5';
-        nextTariffBtn.style.cursor = 'not-allowed';
-    } else {
-        nextTariffBtn.disabled = false;
-        nextTariffBtn.style.opacity = '1';
-        nextTariffBtn.style.cursor = 'pointer';
-    }
+    nextTariffBtn.disabled = currentTariffIndex >= maxIndex;
+    nextTariffBtn.style.opacity = nextTariffBtn.disabled ? '0.5' : '1';
+    nextTariffBtn.style.cursor = nextTariffBtn.disabled ? 'not-allowed' : 'pointer';
 }
 
 function updateTariffsPerView() {
@@ -297,7 +377,7 @@ function updateTariffsPerView() {
     }
 }
 
-// Добавляем клики по индикаторам
+// Клики по индикаторам
 document.addEventListener('DOMContentLoaded', function() {
     const indicators = document.querySelectorAll('.slider-indicator');
     indicators.forEach((indicator, index) => {
