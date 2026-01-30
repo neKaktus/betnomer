@@ -1406,19 +1406,21 @@ body {
         padding: 20px;
         min-height: 80px;
     }
-    
-    /* TARIFFS - ГОРИЗОНТАЛЬНАЯ КАРУСЕЛЬ НА МОБИЛЬНЫХ */
-   /* В разделе @media (max-width: 768px) для тарифов замените на: */
+
+/* TARIFFS - ГОРИЗОНТАЛЬНАЯ КАРУСЕЛЬ НА МОБИЛЬНЫХ */
+/* В разделе @media (max-width: 768px) для тарифов замените на: */
 
 /* TARIFFS - ГОРИЗОНТАЛЬНАЯ КАРУСЕЛЬ НА МОБИЛЬНЫХ */
 .tariffs-section {
     padding: 40px 0;
+    position: relative;
 }
 
 .tariffs-wrapper {
     padding: 0 !important;
     margin: 0 -16px 40px;
     width: calc(100% + 32px);
+    position: relative;
 }
 
 .tariffs-container {
@@ -1430,6 +1432,8 @@ body {
     scrollbar-width: none;
     padding: 0 16px;
     scroll-behavior: smooth;
+    touch-action: pan-y pinch-zoom;
+    position: relative;
 }
 
 .tariffs-container::-webkit-scrollbar {
@@ -1442,6 +1446,7 @@ body {
     gap: 16px;
     padding: 20px 4px;
     min-width: max-content;
+    will-change: transform;
 }
 
 .tariff-card {
@@ -1453,10 +1458,33 @@ body {
     margin: 0 !important;
     transform: none !important;
     transition: transform 0.3s ease;
+    position: relative;
 }
 
-/* Остальной CSS оставьте как есть */
+/* Убираем эффекты ховера на тачах */
+@media (hover: none) and (pointer: coarse) {
+    .tariff-card:hover {
+        transform: none !important;
+        border-color: rgba(255, 255, 255, 0.08) !important;
+    }
     
+    .connect-tariff-btn:hover {
+        transform: none !important;
+    }
+}
+
+/* Предотвращаем выделение текста при свайпе */
+.tariffs-container,
+.tariff-card,
+.tariff-card * {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
     /* FEATURES */
     .features-icons-section {
         padding: 30px 0;
