@@ -1,7 +1,7 @@
 const numbersGrid = document.getElementById('numbersGrid');
 const viewAllBtn = document.getElementById('viewAllBtn');
 const tariffsSlider = document.getElementById('tariffsSlider');
-const tariffsContainer = document.querySelector('.tariffs-container'); // Добавляем контейнер
+const tariffsContainer = document.querySelector('.tariffs-container');
 const prevTariffBtn = document.getElementById('prevTariff');
 const nextTariffBtn = document.getElementById('nextTariff');
 const searchBtn = document.getElementById('searchBtn');
@@ -69,35 +69,81 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Поиск
+    // ПОИСК - ИСПРАВЛЕННЫЙ ВАРИАНТ 2
     if (searchBtn && phoneInput) {
         searchBtn.addEventListener('click', function() {
             const phoneNumber = phoneInput.value.trim();
-            if (!phoneNumber || phoneNumber === '+7 (') {
+            
+            // Проверяем что номер заполнен полностью
+            if (phoneNumber.length < 18) {
                 phoneInput.style.borderColor = 'red';
-                setTimeout(() => phoneInput.style.borderColor = '', 1000);
+                phoneInput.style.boxShadow = '0 0 10px rgba(255, 0, 0, 0.3)';
+                setTimeout(() => {
+                    phoneInput.style.borderColor = '';
+                    phoneInput.style.boxShadow = '';
+                }, 1000);
                 return;
             }
             
             sendToTelegram(`Поиск номера: ${phoneNumber}`);
-            phoneInput.value = '';
+            phoneInput.value = '+7 (';
         });
 
         phoneInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 searchBtn.click();
             }
+            
+            // Разрешаем только цифры
+            if (!/\d/.test(e.key) && e.key !== 'Enter') {
+                e.preventDefault();
+            }
         });
 
         phoneInput.addEventListener('input', function(e) {
             let value = this.value.replace(/\D/g, '');
             
-            if (value.length > 0) value = '+7 (' + value;
-            if (value.length > 7) value = value.slice(0, 7) + ') ' + value.slice(7);
-            if (value.length > 12) value = value.slice(0, 12) + '-' + value.slice(12);
-            if (value.length > 15) value = value.slice(0, 15) + '-' + value.slice(15, 17);
+            // Если пустое - устанавливаем начало номера
+            if (value.length === 0) {
+                this.value = '+7 (';
+                return;
+            }
             
-            this.value = value;
+            // Ограничиваем до 10 цифр (без +7)
+            if (value.length > 10) {
+                value = value.substring(0, 10);
+            }
+            
+            // Форматируем
+            let formatted = '+7 (';
+            
+            if (value.length > 0) {
+                formatted += value;
+                
+                if (value.length >= 3) {
+                    formatted = formatted.substring(0, 7) + ') ' + formatted.substring(7);
+                }
+                if (value.length >= 6) {
+                    formatted = formatted.substring(0, 12) + '-' + formatted.substring(12);
+                }
+                if (value.length >= 8) {
+                    formatted = formatted.substring(0, 15) + '-' + formatted.substring(15);
+                }
+            }
+            
+            this.value = formatted;
+        });
+
+        // Инициализируем начальное значение
+        phoneInput.value = '+7 (';
+        
+        // Фокус в конец
+        phoneInput.addEventListener('focus', function() {
+            if (this.value === '+7 (') {
+                setTimeout(() => {
+                    this.setSelectionRange(4, 4);
+                }, 0);
+            }
         });
     }
 
