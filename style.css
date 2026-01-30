@@ -1408,90 +1408,54 @@ body {
     }
     
     /* TARIFFS - ГОРИЗОНТАЛЬНАЯ КАРУСЕЛЬ НА МОБИЛЬНЫХ */
-    .tariffs-section {
-        padding: 40px 0;
-        overflow: hidden;
-    }
-    
-    .tariffs-wrapper {
-        padding: 0 !important;
-        margin: 0 -16px 40px;
-        width: calc(100% + 32px);
-    }
-    
-    .tariffs-container {
-        width: 100%;
-        overflow-x: auto;
-        overflow-y: hidden;
-        -webkit-overflow-scrolling: touch;
-        scroll-snap-type: x mandatory;
-        scrollbar-width: none;
-        padding: 0 16px;
-    }
-    
-    .tariffs-container::-webkit-scrollbar {
-        display: none;
-    }
-    
-    .tariffs-slider {
-        display: flex;
-        flex-direction: row !important;
-        gap: 16px;
-        transform: none !important;
-        padding: 20px 4px;
-        width: max-content;
-        min-width: 100%;
-    }
-    
-    .tariff-card {
-        flex: 0 0 auto !important;
-        width: 85vw !important;
-        min-width: 280px !important;
-        max-width: 320px !important;
-        margin: 0 !important;
-        scroll-snap-align: start;
-        transform: none !important;
-        opacity: 1 !important;
-        visibility: visible !important;
-        display: flex !important;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
-        padding: 30px 25px;
-    }
-    
-    .operator-name {
-        font-size: 24px;
-        margin-bottom: 20px;
-    }
-    
-    .tariff-info {
-        font-size: 15px;
-        margin: 20px 0;
-    }
-    
-    .tariff-price {
-        font-size: 36px;
-        margin: 25px 0;
-    }
-    
-    .connect-tariff-btn {
-        padding: 16px 25px;
-        font-size: 15px;
-    }
-    
-    .slider-nav-btn {
-        display: none !important;
-    }
-    
-    .slider-indicators {
-        display: none !important;
-    }
-    
-    .swipe-hint {
-        display: block !important;
-        margin-top: 25px;
-        font-size: 13px;
-        opacity: 0.8;
-    }
+   /* В разделе @media (max-width: 768px) для тарифов замените на: */
+
+/* TARIFFS - ГОРИЗОНТАЛЬНАЯ КАРУСЕЛЬ НА МОБИЛЬНЫХ */
+.tariffs-section {
+    padding: 40px 0;
+}
+
+.tariffs-wrapper {
+    padding: 0 !important;
+    margin: 0 -16px 40px;
+    width: calc(100% + 32px);
+}
+
+.tariffs-container {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    padding: 0 16px;
+    scroll-behavior: smooth;
+}
+
+.tariffs-container::-webkit-scrollbar {
+    display: none;
+}
+
+.tariffs-slider {
+    display: flex;
+    flex-direction: row !important;
+    gap: 16px;
+    padding: 20px 4px;
+    min-width: max-content;
+}
+
+.tariff-card {
+    flex: 0 0 auto;
+    width: 85vw;
+    min-width: 280px;
+    max-width: 320px;
+    scroll-snap-align: start;
+    margin: 0 !important;
+    transform: none !important;
+    transition: transform 0.3s ease;
+}
+
+/* Остальной CSS оставьте как есть */
     
     /* FEATURES */
     .features-icons-section {
