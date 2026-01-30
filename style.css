@@ -506,7 +506,7 @@ body {
     transform: translateY(-2px);
 }
 
-/* TARIFFS SECTION - ИСПРАВЛЕННЫЙ ДЛЯ МОБИЛЬНЫХ */
+/* TARIFFS SECTION - КАРУСЕЛЬ ДЛЯ МОБИЛЬНЫХ */
 .tariffs-section {
     padding: 60px 0;
     background: rgba(26, 21, 15, 0.8);
@@ -532,7 +532,7 @@ body {
 }
 
 .tariffs-container {
-    overflow: visible;
+    overflow: hidden;
     border-radius: 0;
     position: relative;
     touch-action: pan-y;
@@ -719,7 +719,7 @@ body {
     }
 }
 
-/* FEATURES SECTION */
+/* FEATURES SECTION - СЕТКА 2x2 НА МОБИЛЬНЫХ */
 .features-icons-section {
     padding: 40px 0;
     position: relative;
@@ -1205,6 +1205,7 @@ body {
         gap: 25px;
     }
 }
+
 
 @media (max-width: 992px) {
     .container {
