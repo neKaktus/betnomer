@@ -3,46 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>betnomer.ru - Подбираем номера</title>
+    <title>bestnomer.ru - Подбираем номера</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const bg = document.createElement('div');
-    bg.className = 'particle-bg';
-    
-    for (let i = 0; i < 150; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-   
-        particle.style.left = `${Math.random() * 100}%`;
-        particle.style.top = `${Math.random() * 100}%`;
-   
-        const size = 0.5 + Math.random() * 2;
-        particle.style.width = `${size}px`;
-        particle.style.height = `${size}px`;
-    
-        particle.style.animationDelay = `${Math.random() * 3}s`;
-      
-        particle.style.opacity = 0.2 + Math.random() * 0.5;
-        
-        bg.appendChild(particle);
-    }
-    
-    document.body.appendChild(bg);
-    
-    const hero = document.querySelector('.hero');
-    window.addEventListener('mousemove', (e) => {
-        const x = (e.clientX / window.innerWidth) * 20 - 10;
-        const y = (e.clientY / window.innerHeight) * 20 - 10;
-        hero.style.transform = `translate(${x}px, ${y}px)`;
-    });
-});
-</script>
+
 <body>
     <div class="space-bg"></div>
   
@@ -51,18 +21,14 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="container">
                 <div class="header-content">
                     <div class="logo-section">
-                        <h1 class="logo">betnomer.ru</h1>
-                        <p class="logo-subtitle">ПОДБИРАЕМ НОМЕРА</p>
+                         <i class="material-icons logo-icon">phone</i>
+                          <div class="logo-text">
+                          <h1 class="logo">bestnomer.ru</h1>
+                          <p class="logo-subtitle">КРАСИВЫЕ НОМЕРА И ТАРИФЫ</p>
+                        </div>
                     </div>
-                    <nav class="nav">
-                        <a href="#numbers" class="nav-link">Номера</a>
-                        
-                        <a href="#tariffs" class="nav-link">Тарифы</a>
-                      
-                        <a href="#contacts" class="nav-link">Контакты</a>
-                    </nav>
                     
-                    <button class="order-btn" id="orderBtn">Заказать</button>
+                    <button class="order-btn" id="orderBtn">ЗАКАЗАТЬ</button>
                 </div>
             </div>
         </header>
@@ -70,34 +36,118 @@ document.addEventListener('DOMContentLoaded', function() {
         <section class="hero">
             <div class="container">
                 <div class="hero-content">
-                    <h2 class="hero-title">УДАЧНЫЕ НОМЕРА <br> ВЫГОДНЫЕ ТАРИФЫ</h2>
+                    <h2 class="hero-title">УДАЧНЫЕ НОМЕРА<br>ВЫГОДНЫЕ ТАРИФЫ</h2>
                     <p class="hero-subtitle">
-                        подбираем красивые номера и лучшие тарифы <br>в ведущих мобильных операторах
-                        <!-- ПОДБИРАЕМ КРАСИВЫЕ НОМЕРА И ПОДБИРАЕМ ЛУЧШИЕ ТАРИФЫ
-                        В ВЕДУЩИХ МОБИЛЬНЫХ ОПЕРАТОРАХ -->
+                        Подбираем красивые номера и лучшие тарифы в ведущих мобильных операторах
                     </p>
                     
-                    
+          
                     <div class="search-section">
                         <div class="search-box">
+                            <div class="phone-prefix">
+                                
+                               
+                            </div>
                             <input type="text" class="search-input" placeholder="+7 (000) 000-00-00" id="phoneInput">
                             <button class="search-btn" id="searchBtn">
                                 <span class="btn-text">ВВЕСТИ</span>
-                                <i class="fas fa-search"></i>
+                                <i class="material-icons">search</i>
                             </button>
                         </div>
                     </div>
                     
-                    
+              
                     <div class="tags">
-                        <span class="tag">Зеркальные</span>
-                        <span class="tag">Повторяющиеся</span>
-                        <span class="tag">Красивые</span>
-                        <span class="tag">Серебряные</span>
+                        <span class="tag">
+                           
+                            <span>ЗЕРКАЛЬНЫЕ</span>
+                        </span>
+                        <span class="tag">
+                   
+                            <span>ПОВТОРЯЮЩИЕСЯ</span>
+                        </span>
+                        <span class="tag">
+                   
+                            <span>КРАСИВЫЕ</span>
+                        </span>
+                        <span class="tag">
+                      
+                            <span>СЕРЕБРЯНЫЕ</span>
+                        </span>
                     </div>
                 </div>
             </div>
         </section>
+
+
+       <section class="features-icons-section">
+    <div class="container">
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-icon-box">
+                    <i class="material-icons">diamond</i>
+                </div>
+                <div class="feature-text">
+                    <h3 class="feature-title">КРАСИВЫЕ НОМЕРА</h3>
+                    <p class="feature-desc">Огромный выбор VIP номеров</p>
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon-box">
+                    <i class="material-icons">trending_up</i>
+                </div>
+                <div class="feature-text">
+                    <h3 class="feature-title">ВЫГОДНЫЕ ТАРИФЫ</h3>
+                    <p class="feature-desc">Лучшие тарифы от операторов</p>
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon-box">
+                    <i class="material-icons">bolt</i>
+                </div>
+                <div class="feature-text">
+                    <h3 class="feature-title">БЫСТРЫЙ ПОДБОР</h3>
+                    <p class="feature-desc">Подберем номер по запросу</p>
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon-box">
+                    <i class="material-icons">support_agent</i>
+                </div>
+                <div class="feature-text">
+                    <h3 class="feature-title">ПОДДЕРЖКА<br><span class="hours-24">24/7</span></h3>
+                    <p class="feature-desc">Помощь на всех этапах</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="operators-section">
+            <p class="operators-title">Работаем с операторами:</p>
+            <div class="operators-logos">
+          
+                <div class="operator-logo">
+                    <img src="images/megafon-vertical-logo.png" alt="МЕГАФОН" class="operator-logo-img">
+                </div>
+                <div class="operator-logo">
+                    <img src="images/yota-logo.png" alt="YOTA" class="operator-logo-img">
+                </div>
+                <div class="operator-logo">
+                    <img src="images/MTS.png" alt="MTS" class="operator-logo-img">
+                </div>
+                 <div class="operator-logo">
+                    <img src="images/png-klev-club-wya5-p-bilain-png-4.png" alt="Beeline" class="operator-logo-img">
+                </div>
+                 <div class="operator-logo">
+                    <img src="images/tele-2-logo.png" alt="Tele2" class="operator-logo-img">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 
         <section class="numbers-section" id="numbers">
             <div class="container">
@@ -148,8 +198,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="footer-content">
                     <div class="footer-main">
                         <div class="footer-logo">
-                            <h2 class="logo">betnomer.ru</h2>
-                            <p class="footer-subtitle">подбираем номера</p>
+                            <h2 class="logo">bestnomer.ru</h2>
+                            <p class="footer-subtitle">красивые номера и тарифы</p>
                            
                         </div>
                         
@@ -160,7 +210,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             </a>
                             <a href="mailto:info@bestnomer.ru" class="email-link">
                                 <i class="fas fa-envelope"></i>
-                                info@betnomer.ru
+                                info@bestnomer.ru
                             </a>
                             
                         </div>
@@ -179,11 +229,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     
                     <div class="footer-bottom">
-                        <!-- <button class="callback-btn" id="callbackBtn">
-                            <i class="fas fa-phone-alt"></i>
-                            Заказать обратный звонок
-                        </button> -->
-                        <p class="copyright">© 2026 betnomer.ru. Все права защищены.</p>
+                        <p class="copyright">© 2026 bestnomer.ru. Все права защищены.</p>
                     </div>
                 </div>
             </div>
