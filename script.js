@@ -20,6 +20,8 @@ let currentTranslate = 0;
 let prevTranslate = 0;
 let isDragging = false;
 let animationID;
+let cardWidth = 0;
+let gap = 16; // Совпадает с CSS gap
 
 const TELEGRAM_USERNAME = "ne_kaktus";
 
@@ -49,16 +51,8 @@ document.addEventListener('DOMContentLoaded', function() {
     updateTariffsSlider();
     updateNavButtons();
     
-    // Добавляем обработчики свайпа на мобильных
-    if (tariffsSlider) {
-        tariffsSlider.addEventListener('touchstart', touchStart);
-        tariffsSlider.addEventListener('touchmove', touchMove);
-        tariffsSlider.addEventListener('touchend', touchEnd);
-        tariffsSlider.addEventListener('mousedown', touchStart);
-        tariffsSlider.addEventListener('mousemove', touchMove);
-        tariffsSlider.addEventListener('mouseup', touchEnd);
-        tariffsSlider.addEventListener('mouseleave', touchEnd);
-    }
+    // Инициализация свайпа
+    initSwipe();
     
     // Кнопки навигации
     if (prevTariffBtn) {
@@ -137,8 +131,16 @@ document.addEventListener('DOMContentLoaded', function() {
         checkMobile();
         updateSwipeHint();
         updateTariffsPerView();
+        
+        // Пересчитываем ширину карточек
+        if (tariffsSlider && tariffsSlider.children.length > 0) {
+            const firstCard = tariffsSlider.children[0];
+            cardWidth = firstCard.offsetWidth;
+        }
+        
         updateTariffsSlider();
         updateNavButtons();
+        
         // Сбрасываем позицию свайпа при изменении размера
         if (!isMobile) {
             currentTranslate = 0;
@@ -147,6 +149,35 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// Инициализация свайпа
+function initSwipe() {
+    if (!tariffsSlider) return;
+    
+    // Рассчитываем ширину карточки
+    if (tariffsSlider.children.length > 0) {
+        const firstCard = tariffsSlider.children[0];
+        cardWidth = firstCard.offsetWidth;
+    }
+    
+    // Добавляем обработчики свайпа на мобильных
+    tariffsSlider.addEventListener('touchstart', touchStart);
+    tariffsSlider.addEventListener('touchmove', touchMove);
+    tariffsSlider.addEventListener('touchend', touchEnd);
+    
+    // Для тестирования на ПК
+    tariffsSlider.addEventListener('mousedown', touchStart);
+    tariffsSlider.addEventListener('mousemove', touchMove);
+    tariffsSlider.addEventListener('mouseup', touchEnd);
+    tariffsSlider.addEventListener('mouseleave', touchEnd);
+    
+    // Предотвращаем выделение текста при свайпе
+    tariffsSlider.addEventListener('selectstart', function(e) {
+        if (isMobile) {
+            e.preventDefault();
+        }
+    });
+}
 
 // Функции для свайпа
 function checkMobile() {
@@ -174,7 +205,7 @@ function animation() {
 function setSliderPosition() {
     if (!tariffsSlider) return;
     tariffsSlider.style.transform = `translateX(${currentTranslate}px)`;
-    tariffsSlider.style.transition = isDragging ? 'none' : 'transform 0.3s ease';
+    tariffsSlider.style.transition = isDragging ? 'none' : 'transform 0.3s ease-out';
 }
 
 function touchStart(event) {
@@ -205,18 +236,21 @@ function touchEnd() {
     
     const movedBy = currentTranslate - prevTranslate;
     
-    // Если свайп достаточно сильный, меняем слайд
-    if (Math.abs(movedBy) > 50) {
+    // Рассчитываем порог для смены слайда (30% ширины карточки)
+    const threshold = cardWidth * 0.3;
+    
+    // Определяем направление свайпа и меняем слайд если порог превышен
+    if (Math.abs(movedBy) > threshold) {
         if (movedBy < 0 && currentTariffIndex < tariffsData.length - tariffsPerView) {
+            // Свайп влево - следующий слайд
             currentTariffIndex++;
         } else if (movedBy > 0 && currentTariffIndex > 0) {
+            // Свайп вправо - предыдущий слайд
             currentTariffIndex--;
         }
     }
     
     // Сбрасываем позицию и обновляем слайдер
-    currentTranslate = 0;
-    prevTranslate = 0;
     updateTariffsSlider();
     updateNavButtons();
 }
@@ -266,15 +300,25 @@ function updateTariffsSlider() {
     if (!tariffsSlider) return;
     
     if (isMobile) {
-        // На мобильных используем свайп
-        const cardWidth = tariffsSlider.children[0]?.offsetWidth || 300;
-        const offset = -currentTariffIndex * (cardWidth + 20); // +20 для gap
-        currentTranslate = offset;
-        setSliderPosition();
+        // На мобильных рассчитываем смещение на основе ширины карточки и gap
+        if (cardWidth === 0 && tariffsSlider.children.length > 0) {
+            cardWidth = tariffsSlider.children[0].offsetWidth;
+        }
+        
+        // Рассчитываем полное смещение
+        const totalOffset = currentTariffIndex * (cardWidth + gap);
+        currentTranslate = -totalOffset;
+        
+        // Применяем плавную анимацию
+        tariffsSlider.style.transition = 'transform 0.3s ease-out';
+        tariffsSlider.style.transform = `translateX(${currentTranslate}px)`;
+        
+        // Устанавливаем cursor для feedback
+        tariffsSlider.style.cursor = 'grab';
     } else {
         // На десктопе используем проценты
-        const cardWidth = 100 / tariffsPerView;
-        const offset = -currentTariffIndex * cardWidth;
+        const cardWidthPercent = 100 / tariffsPerView;
+        const offset = -currentTariffIndex * cardWidthPercent;
         tariffsSlider.style.transform = `translateX(${offset}%)`;
     }
     
@@ -331,7 +375,13 @@ function updateTariffsPerView() {
         tariffsPerView = 3;
     }
 
-    renderTariffs();
+    // Обновляем рендер тарифов с новым количеством в строке
+    tariffsData.forEach((tariff, index) => {
+        const card = tariffsSlider?.children[index];
+        if (card) {
+            card.style.flex = `0 0 calc(${100 / tariffsPerView}% - 20px)`;
+        }
+    });
     
     const maxIndex = tariffsData.length - tariffsPerView;
     if (currentTariffIndex > maxIndex) {
@@ -344,16 +394,29 @@ document.addEventListener('DOMContentLoaded', function() {
     const indicators = document.querySelectorAll('.slider-indicator');
     indicators.forEach((indicator, index) => {
         indicator.addEventListener('click', function() {
-            currentTariffIndex = index;
-            updateTariffsSlider();
+            if (isMobile) {
+                // На мобильных используем позиционирование в пикселях
+                if (cardWidth === 0 && tariffsSlider.children.length > 0) {
+                    cardWidth = tariffsSlider.children[0].offsetWidth;
+                }
+                currentTariffIndex = index;
+                const totalOffset = currentTariffIndex * (cardWidth + gap);
+                currentTranslate = -totalOffset;
+                tariffsSlider.style.transition = 'transform 0.3s ease-out';
+                tariffsSlider.style.transform = `translateX(${currentTranslate}px)`;
+            } else {
+                // На десктопе - проценты
+                currentTariffIndex = index;
+                updateTariffsSlider();
+            }
             updateNavButtons();
+            updateIndicators();
         });
     });
 });
 
-// Предотвращаем выделение текста при свайпе
-tariffsSlider?.addEventListener('selectstart', function(e) {
-    if (isMobile) {
-        e.preventDefault();
-    }
-});
+// Для красоты: добавляем плавный скролл для карусели на мобильных
+if (tariffsSlider && isMobile) {
+    tariffsSlider.style.overflow = 'visible';
+}
+
