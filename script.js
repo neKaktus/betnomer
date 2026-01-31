@@ -1,7 +1,7 @@
 const numbersGrid = document.getElementById('numbersGrid');
 const viewAllBtn = document.getElementById('viewAllBtn');
 const tariffsSlider = document.getElementById('tariffsSlider');
-const tariffsContainer = document.querySelector('.tariffs-container'); // Добавляем контейнер
+const tariffsContainer = document.querySelector('.tariffs-container');
 const prevTariffBtn = document.getElementById('prevTariff');
 const nextTariffBtn = document.getElementById('nextTariff');
 const searchBtn = document.getElementById('searchBtn');
@@ -9,6 +9,9 @@ const phoneInput = document.getElementById('phoneInput');
 const pickTariffBtn = document.getElementById('pickTariffBtn');
 const orderBtn = document.getElementById('orderBtn');
 const callbackBtn = document.getElementById('callbackBtn');
+const mobileMenuBtn = document.getElementById('mobileMenuBtn'); // Добавляем
+const mobileMenu = document.getElementById('mobileMenu'); // Добавляем
+const orderBtnMobile = document.getElementById('orderBtnMobile'); // Добавляем кнопку заказа в мобильном меню
 
 let currentNumbersDisplayed = 4;
 let currentTariffIndex = 0;
@@ -25,7 +28,56 @@ function sendToTelegram(message) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Проверяем мобильное устройство
+    createStars();
+    // Инициализация мобильного меню
+    if (mobileMenuBtn && mobileMenu) {
+        mobileMenuBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            mobileMenu.classList.toggle('active');
+            this.classList.toggle('active');
+            document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+        });
+
+        // Закрыть меню при клике на ссылку
+        mobileMenu.querySelectorAll('.mobile-nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        });
+
+        // Закрыть меню при клике вне его
+        document.addEventListener('click', function(e) {
+            if (mobileMenu.classList.contains('active') && 
+                !mobileMenu.contains(e.target) && 
+                !mobileMenuBtn.contains(e.target)) {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Закрыть меню при нажатии Esc
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+    }
+
+    // Обработчик кнопки заказа в мобильном меню
+    if (orderBtnMobile) {
+        orderBtnMobile.addEventListener('click', function() {
+            sendToTelegram('Заказ услуги');
+            mobileMenu.classList.remove('active');
+            mobileMenuBtn.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+    }
+
     checkMobile();
     updateSwipeHint();
     
@@ -44,10 +96,8 @@ document.addEventListener('DOMContentLoaded', function() {
     updateTariffsSlider();
     updateNavButtons();
     
-    // Оптимизированная реализация свайпа
     initOptimizedSwipe();
     
-    // Кнопки навигации
     if (prevTariffBtn) {
         prevTariffBtn.addEventListener('click', function() {
             if (currentTariffIndex > 0) {
@@ -69,39 +119,49 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Поиск
+    // Обновленный ввод номера (как во втором файле)
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function() {
+            let value = this.value.replace(/\D/g, '');
+            
+            // Убираем начальные 7 или 8
+            if (value.startsWith('7')) value = value.slice(1);
+            if (value.startsWith('8')) value = value.slice(1);
+            
+            let formatted = '+7';
+            if (value.length > 0) formatted += ' (' + value.slice(0, 3);
+            if (value.length > 3) formatted += ') ' + value.slice(3, 6);
+            if (value.length > 6) formatted += '-' + value.slice(6, 8);
+            if (value.length > 8) formatted += '-' + value.slice(8, 10);
+            
+            this.value = formatted;
+        });
+
+        // Обработка нажатия Enter
+        phoneInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                if (searchBtn) searchBtn.click();
+            }
+        });
+    }
+
+    // Обновленный поиск
     if (searchBtn && phoneInput) {
         searchBtn.addEventListener('click', function() {
             const phoneNumber = phoneInput.value.trim();
-            if (!phoneNumber || phoneNumber === '+7 (') {
+            
+            // Проверка на пустой или неполный номер
+            if (!phoneNumber || phoneNumber.length < 10) {
                 phoneInput.style.borderColor = 'red';
                 setTimeout(() => phoneInput.style.borderColor = '', 1000);
                 return;
             }
             
             sendToTelegram(`Поиск номера: ${phoneNumber}`);
-            phoneInput.value = '';
-        });
-
-        phoneInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                searchBtn.click();
-            }
-        });
-
-        phoneInput.addEventListener('input', function(e) {
-            let value = this.value.replace(/\D/g, '');
-            
-            if (value.length > 0) value = '+7 (' + value;
-            if (value.length > 7) value = value.slice(0, 7) + ') ' + value.slice(7);
-            if (value.length > 12) value = value.slice(0, 12) + '-' + value.slice(12);
-            if (value.length > 15) value = value.slice(0, 15) + '-' + value.slice(15, 17);
-            
-            this.value = value;
+            phoneInput.value = '+7';
         });
     }
-
-    // Остальные кнопки
+    
     if (pickTariffBtn) {
         pickTariffBtn.addEventListener('click', function() {
             sendToTelegram('Подбор тарифа');
@@ -129,7 +189,53 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Оптимизированная реализация свайпа
+function createStars() {
+    const spaceBg = document.querySelector('.space-bg');
+    if (!spaceBg) return;
+    
+    // Создаем 100 маленьких звезд
+    for (let i = 0; i < 100; i++) {
+        const star = document.createElement('div');
+        star.className = 'star small';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.animationDelay = Math.random() * 3 + 's';
+        spaceBg.appendChild(star);
+    }
+    
+    // Создаем 50 средних звезд
+    for (let i = 0; i < 50; i++) {
+        const star = document.createElement('div');
+        star.className = 'star medium';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.animationDelay = Math.random() * 2 + 's';
+        spaceBg.appendChild(star);
+    }
+    
+    // Создаем 20 больших звезд
+    for (let i = 0; i < 20; i++) {
+        const star = document.createElement('div');
+        star.className = 'star large';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.animationDelay = Math.random() * 4 + 's';
+        spaceBg.appendChild(star);
+    }
+    
+    // Создаем 10 золотых частиц
+    for (let i = 0; i < 10; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'gold-particle';
+        const size = Math.random() * 5 + 2;
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 15 + 's';
+        particle.style.animationDuration = (Math.random() * 10 + 20) + 's';
+        spaceBg.appendChild(particle);
+    }
+}
 function initOptimizedSwipe() {
     if (!tariffsSlider || !tariffsContainer) return;
     
@@ -140,7 +246,7 @@ function initOptimizedSwipe() {
     let isHorizontalMove = false;
     let scrollTimeout = null;
     
-    // Обработчик начала касания
+
     const handleTouchStart = (e) => {
         if (!isMobile) return;
         
@@ -151,12 +257,12 @@ function initOptimizedSwipe() {
         startScrollTop = window.scrollY || document.documentElement.scrollTop;
         isHorizontalMove = false;
         
-        // Отключаем скролл страницы
+
         document.body.style.overflow = 'hidden';
         tariffsContainer.style.scrollSnapType = 'none';
     };
     
-    // Обработчик движения
+
     const handleTouchMove = (e) => {
         if (!isMobile || !isScrolling) return;
         
@@ -167,17 +273,17 @@ function initOptimizedSwipe() {
         const deltaX = currentX - startX;
         const deltaY = currentY - startY;
         
-        // Определяем, это горизонтальное или вертикальное движение
+       
         if (!isHorizontalMove) {
             if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 5) {
                 isHorizontalMove = true;
             } else if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 5) {
                 isHorizontalMove = false;
-                return; // Позволяем вертикальный скролл страницы
+                return; 
             }
         }
         
-        // Если это горизонтальное движение - скроллим карусель
+ 
         if (isHorizontalMove) {
             e.stopPropagation();
             const scrollAmount = startScrollLeft - deltaX;
@@ -185,7 +291,7 @@ function initOptimizedSwipe() {
         }
     };
     
-    // Обработчик окончания касания
+
     const handleTouchEnd = (e) => {
         if (!isMobile) return;
         
@@ -193,7 +299,7 @@ function initOptimizedSwipe() {
         document.body.style.overflow = '';
         tariffsContainer.style.scrollSnapType = 'x mandatory';
         
-        // Включаем привязку к ближайшей карточке
+
         if (isHorizontalMove) {
             const containerRect = tariffsContainer.getBoundingClientRect();
             const cards = tariffsSlider.children;
@@ -213,8 +319,7 @@ function initOptimizedSwipe() {
             if (nearestCard) {
                 const cardIndex = parseInt(nearestCard.dataset.index);
                 currentTariffIndex = cardIndex;
-                
-                // Плавная прокрутка к центру карточки
+           
                 tariffsContainer.scrollTo({
                     left: nearestCard.offsetLeft - (containerRect.width - nearestCard.offsetWidth) / 2,
                     behavior: 'smooth'
@@ -224,33 +329,32 @@ function initOptimizedSwipe() {
                 updateIndicators();
             }
         }
-        
-        // Очищаем таймер
+
         if (scrollTimeout) clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(() => {
             isHorizontalMove = false;
         }, 300);
     };
     
-    // Добавляем обработчики на контейнер, а не на слайдер
+
     tariffsContainer.addEventListener('touchstart', handleTouchStart, { passive: false });
     tariffsContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
     tariffsContainer.addEventListener('touchend', handleTouchEnd, { passive: true });
     
-    // Предотвращаем зум страницы при касании карусели
+
     tariffsContainer.addEventListener('touchstart', (e) => {
         if (e.touches.length > 1) {
             e.preventDefault();
         }
     }, { passive: false });
     
-    // Предотвращаем контекстное меню при долгом касании
+
     tariffsContainer.addEventListener('contextmenu', (e) => {
         if (isMobile) e.preventDefault();
     });
 }
 
-// Функции для свайпа
+
 function checkMobile() {
     isMobile = window.innerWidth <= 768;
     if (isMobile) {
@@ -314,7 +418,6 @@ function updateTariffsSlider() {
     if (!tariffsSlider) return;
     
     if (!isMobile) {
-        // Для десктопа
         const cardWidthPercent = 100 / tariffsPerView;
         const offset = -currentTariffIndex * cardWidthPercent;
         tariffsSlider.style.transform = `translateX(${offset}%)`;
@@ -377,7 +480,6 @@ function updateTariffsPerView() {
     }
 }
 
-// Клики по индикаторам
 document.addEventListener('DOMContentLoaded', function() {
     const indicators = document.querySelectorAll('.slider-indicator');
     indicators.forEach((indicator, index) => {
@@ -388,4 +490,3 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
-
