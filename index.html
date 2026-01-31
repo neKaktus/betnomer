@@ -28,10 +28,36 @@
                         </div>
                     </div>
                     
+                    <!-- Навигация для десктопа -->
+                    <nav class="nav">
+                        <a href="#numbers" class="nav-link">Номера</a>
+                        <a href="#tariffs" class="nav-link">Тарифы</a>
+                        <a href="#features" class="nav-link">Преимущества</a>
+                        <a href="#operators" class="nav-link">Операторы</a>
+                    </nav>
+                    
                     <button class="order-btn" id="orderBtn">ЗАКАЗАТЬ</button>
+                    
+                    <!-- Бургер-меню для мобильных -->
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
                 </div>
             </div>
         </header>
+
+        <!-- Мобильное меню -->
+        <div class="mobile-menu" id="mobileMenu">
+            <nav class="mobile-nav">
+                <a href="#numbers" class="mobile-nav-link">Номера</a>
+                <a href="#tariffs" class="mobile-nav-link">Тарифы</a>
+                <a href="#features" class="mobile-nav-link">Преимущества</a>
+                <a href="#operators" class="mobile-nav-link">Операторы</a>
+               <button class="order-btn mobile-order-btn" id="orderBtnMobile">ЗАКАЗАТЬ</button>
+            </nav>
+        </div>
 
         <section class="hero">
             <div class="container">
@@ -41,13 +67,8 @@
                         Подбираем красивые номера и лучшие тарифы в ведущих мобильных операторах
                     </p>
                     
-          
                     <div class="search-section">
                         <div class="search-box">
-                            <div class="phone-prefix">
-                                
-                               
-                            </div>
                             <input type="text" class="search-input" placeholder="+7 (000) 000-00-00" id="phoneInput">
                             <button class="search-btn" id="searchBtn">
                                 <span class="btn-text">ВВЕСТИ</span>
@@ -56,98 +77,84 @@
                         </div>
                     </div>
                     
-              
                     <div class="tags">
-                        <span class="tag">
-                           
-                            <span>ЗЕРКАЛЬНЫЕ</span>
-                        </span>
-                        <span class="tag">
-                   
-                            <span>ПОВТОРЯЮЩИЕСЯ</span>
-                        </span>
-                        <span class="tag">
-                   
-                            <span>КРАСИВЫЕ</span>
-                        </span>
-                        <span class="tag">
-                      
-                            <span>СЕРЕБРЯНЫЕ</span>
-                        </span>
+                        <span class="tag">ЗЕРКАЛЬНЫЕ</span>
+                        <span class="tag">ПОВТОРЯЮЩИЕСЯ</span>
+                        <span class="tag">КРАСИВЫЕ</span>
+                        <span class="tag">СЕРЕБРЯНЫЕ</span>
                     </div>
                 </div>
             </div>
         </section>
 
-
-       <section class="features-icons-section">
-    <div class="container">
-        <div class="features-grid">
-            <div class="feature-item">
-                <div class="feature-icon-box">
-                    <i class="material-icons">diamond</i>
+        <!-- Секция преимуществ -->
+        <section class="features-icons-section" id="features">
+            <div class="container">
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon-box">
+                            <i class="material-icons">diamond</i>
+                        </div>
+                        <div class="feature-text">
+                            <h3 class="feature-title">КРАСИВЫЕ НОМЕРА</h3>
+                            <p class="feature-desc">Огромный выбор VIP номеров</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon-box">
+                            <i class="material-icons">trending_up</i>
+                        </div>
+                        <div class="feature-text">
+                            <h3 class="feature-title">ВЫГОДНЫЕ ТАРИФЫ</h3>
+                            <p class="feature-desc">Лучшие тарифы от операторов</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon-box">
+                            <i class="material-icons">bolt</i>
+                        </div>
+                        <div class="feature-text">
+                            <h3 class="feature-title">БЫСТРЫЙ ПОДБОР</h3>
+                            <p class="feature-desc">Подберем номер по запросу</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon-box">
+                            <i class="material-icons">support_agent</i>
+                        </div>
+                        <div class="feature-text">
+                            <h3 class="feature-title">ПОДДЕРЖКА 24/7</h3>
+                            <p class="feature-desc">Помощь на всех этапах</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="feature-text">
-                    <h3 class="feature-title">КРАСИВЫЕ НОМЕРА</h3>
-                    <p class="feature-desc">Огромный выбор VIP номеров</p>
+                
+                <!-- Секция операторов -->
+                <div class="operators-section" id="operators">
+                    <p class="operators-title">Работаем с операторами:</p>
+                    <div class="operators-grid">
+                        <div class="operator-item">
+                            <img src="images/beline.png" alt="Билайн" class="operator-logo-img">
+                        </div>
+                        <div class="operator-item">
+                            <img src="images/megafon-vertical-logo.png" alt="Мегафон" class="operator-logo-img">
+                        </div>
+                        <div class="operator-item">
+                            <img src="images/MTS.png" alt="МТС" class="operator-logo-img">
+                        </div>
+                        <div class="operator-item">
+                            <img src="images/yota-logo.png" alt="YOTA" class="operator-logo-img">
+                        </div>
+                        <div class="operator-item">
+                            <img src="images/tele-2-logo.png" alt="Tele2" class="operator-logo-img">
+                        </div>
+                    </div>
                 </div>
             </div>
-            
-            <div class="feature-item">
-                <div class="feature-icon-box">
-                    <i class="material-icons">trending_up</i>
-                </div>
-                <div class="feature-text">
-                    <h3 class="feature-title">ВЫГОДНЫЕ ТАРИФЫ</h3>
-                    <p class="feature-desc">Лучшие тарифы от операторов</p>
-                </div>
-            </div>
-            
-            <div class="feature-item">
-                <div class="feature-icon-box">
-                    <i class="material-icons">bolt</i>
-                </div>
-                <div class="feature-text">
-                    <h3 class="feature-title">БЫСТРЫЙ ПОДБОР</h3>
-                    <p class="feature-desc">Подберем номер по запросу</p>
-                </div>
-            </div>
-            
-            <div class="feature-item">
-                <div class="feature-icon-box">
-                    <i class="material-icons">support_agent</i>
-                </div>
-                <div class="feature-text">
-                    <h3 class="feature-title">ПОДДЕРЖКА 24/7</h3>
-                    <p class="feature-desc">Помощь на всех <br>этапах</p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="operators-section">
-            <p class="operators-title">Работаем с операторами:</p>
-            <div class="operators-logos">
-          
-                <div class="operator-logo">
-                    <img src="images/megafon-vertical-logo.png" alt="МЕГАФОН" class="operator-logo-img">
-                </div>
-                <div class="operator-logo">
-                    <img src="images/yota-logo.png" alt="YOTA" class="operator-logo-img">
-                </div>
-                <div class="operator-logo">
-                    <img src="images/MTS.png" alt="MTS" class="operator-logo-img">
-                </div>
-                 <div class="operator-logo">
-                    <img src="images/png-klev-club-wya5-p-bilain-png-4.png" alt="Beeline" class="operator-logo-img">
-                </div>
-                 <div class="operator-logo">
-                    <img src="images/tele-2-logo.png" alt="Tele2" class="operator-logo-img">
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
+        </section>
 
         <section class="numbers-section" id="numbers">
             <div class="container">
@@ -200,7 +207,6 @@
                         <div class="footer-logo">
                             <h2 class="logo">bestnomer.ru</h2>
                             <p class="footer-subtitle">красивые номера и тарифы</p>
-                           
                         </div>
                         
                         <div class="footer-info">
@@ -212,7 +218,6 @@
                                 <i class="fas fa-envelope"></i>
                                 info@bestnomer.ru
                             </a>
-                            
                         </div>
                         
                         <div class="social-links">
@@ -230,6 +235,12 @@
                     
                     <div class="footer-bottom">
                         <p class="copyright">© 2026 bestnomer.ru. Все права защищены.</p>
+                         
+                    </div>
+                    <div class="payment-methods">
+                        <img src="images/Visa.png" alt="Visa" class="payment-img">
+                        <img src="images/Mastercard.png" alt="Mastercard" class="payment-img">
+                        <img src="images/Mir.png" alt="МИР" class="payment-img">
                     </div>
                 </div>
             </div>
