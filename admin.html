@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель - Bestnomer.ru</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0d0b08 0%, #1a150f 50%, #0d0b08 100%);
+            color: #eee;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(1px 1px at 20% 30%, rgba(255, 215, 0, 0.3), transparent),
+                radial-gradient(1px 1px at 80% 20%, rgba(255, 215, 0, 0.2), transparent),
+                radial-gradient(1px 1px at 40% 70%, rgba(255, 255, 255, 0.15), transparent),
+                radial-gradient(1px 1px at 60% 50%, rgba(255, 215, 0, 0.25), transparent);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background: rgba(26, 21, 15, 0.95);
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .admin-title {
+            font-size: 24px;
+            color: #FFD700;
+            font-weight: 700;
+        }
+
+        .admin-nav {
+            display: flex;
+            gap: 15px;
+        }
+
+        .admin-nav a {
+            color: #aaa;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .admin-nav a:hover,
+        .admin-nav a.active {
+            background: rgba(255, 215, 0, 0.1);
+            color: #FFD700;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .tab-btn {
+            padding: 15px 30px;
+            background: rgba(26, 21, 15, 0.95);
+            border: 2px solid transparent;
+            color: #aaa;
+            cursor: pointer;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover {
+            border-color: rgba(255, 215, 0, 0.3);
+            color: #FFD700;
+        }
+
+        .tab-btn.active {
+            background: rgba(255, 215, 0, 0.15);
+            border-color: #FFD700;
+            color: #FFD700;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: rgba(26, 21, 15, 0.95);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 215, 0, 0.15);
+        }
+
+        .card-title {
+            font-size: 18px;
+            color: #FFD700;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(13, 11, 8, 0.95);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #FFD700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #FFD700 0%, #DAA520 100%);
+            color: #1a1a2e;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #aaa;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+        }
+
+        th {
+            background: rgba(255, 215, 0, 0.1);
+            color: #FFD700;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tr:hover {
+            background: rgba(255, 215, 0, 0.05);
+        }
+
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-mask {
+            background: rgba(255, 215, 0, 0.2);
+            color: #FFD700;
+        }
+
+        .badge-vip {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #1a1a2e;
+        }
+
+        .badge-hit {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+        }
+
+        .badge-sale {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+        }
+
+        .badge-new {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-sm {
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(26, 21, 15, 0.95);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            border: 1px solid rgba(255, 215, 0, 0.15);
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #FFD700;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-success {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid #2ecc71;
+            color: #2ecc71;
+        }
+
+        .alert-error {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
+        }
+
+        .export-section {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        /* Модальное окно */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: rgba(26, 21, 15, 0.98);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-content .card-title {
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 992px) {
+            .admin-container {
+                padding: 15px;
+            }
+            
+            .admin-nav {
+                display: none;
+            }
+            
+            table {
+                font-size: 13px;
+            }
+            
+            th, td {
+                padding: 10px 8px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .admin-header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px 20px;
+            }
+            
+            .admin-title {
+                font-size: 20px;
+            }
+            
+            .tabs {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            
+            .tab-btn {
+                flex: 1;
+                min-width: 100px;
+                text-align: center;
+                padding: 12px 15px;
+                font-size: 12px;
+            }
+            
+            .card {
+                padding: 15px;
+            }
+            
+            .card-title {
+                font-size: 16px;
+            }
+            
+            .stat-card {
+                padding: 15px;
+            }
+            
+            .stat-value {
+                font-size: 28px;
+            }
+            
+            .table-container {
+                margin: 0 -15px;
+                padding: 0 15px;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 8px 6px;
+            }
+            
+            .btn {
+                padding: 10px 15px;
+                font-size: 12px;
+            }
+            
+            .export-section {
+                flex-direction: column;
+            }
+            
+            .export-section .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .admin-container {
+                padding: 10px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .tab-btn {
+                min-width: 80px;
+                padding: 10px 12px;
+                font-size: 11px;
+            }
+            
+            td .badge {
+                font-size: 10px;
+                padding: 3px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <header class="admin-header">
+            <h1 class="admin-title">
+                <i class="fas fa-cog"></i> Админ-панель Bestnomer.ru
+            </h1>
+            <nav class="admin-nav">
+                <a href="index.html"><i class="fas fa-home"></i> На сайт</a>
+            </nav>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalNumbers">0</div>
+                <div class="stat-label">Всего номеров</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalMasks">0</div>
+                <div class="stat-label">Масок</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalTariffs">0</div>
+                <div class="stat-label">Тарифов</div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="numbers">
+                <i class="fas fa-phone"></i> Номера
+            </button>
+            <button class="tab-btn" data-tab="masks">
+                <i class="fas fa-layer-group"></i> Маски
+            </button>
+            <button class="tab-btn" data-tab="export">
+                <i class="fas fa-download"></i> Экспорт/Импорт
+            </button>
+        </div>
+
+        <div id="alert" class="alert"></div>
+
+        <!-- Вкладка номеров -->
+        <div id="numbers" class="tab-content active">
+            <div class="card">
+                <h3 class="card-title"><i class="fas fa-plus"></i> Добавить номер</h3>
+                <form id="addNumberForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>1. Номер телефона</label>
+                            <input type="text" id="numberPhone" placeholder="+7 (900) 123-45-67" required>
+                        </div>
+                        <div class="form-group">
+                            <label>2. Цена</label>
+                            <input type="text" id="numberPrice" placeholder="50 000 ₽" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Маска</label>
+                            <select id="numberMask" required>
+                                <option value="">Выберите маску</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>3. Значок (badge)</label>
+                            <select id="numberBadge">
+                                <option value="">Без значка</option>
+                                <option value="vip">VIP</option>
+                                <option value="hit">HIT</option>
+                                <option value="sale">SALE</option>
+                                <option value="new">NEW</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Добавить номер
+                    </button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title"><i class="fas fa-list"></i> Список номеров</h3>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <input type="text" id="searchNumber" placeholder="🔍 Поиск по номеру..." oninput="filterNumbers()">
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Номер</th>
+                                <th>Цена</th>
+                                <th>Маска</th>
+                                <th>Значок</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="numbersTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Модальное окно редактирования -->
+            <div id="editModal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <h3 class="card-title"><i class="fas fa-edit"></i> Редактирование номера</h3>
+                    <input type="hidden" id="editIndex">
+                    <div class="form-group">
+                        <label>Номер телефона</label>
+                        <input type="text" id="editPhone">
+                    </div>
+                    <div class="form-group">
+                        <label>Цена</label>
+                        <input type="text" id="editPrice">
+                    </div>
+                    <div class="form-group">
+                        <label>Маска</label>
+                        <select id="editMask"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Значок</label>
+                        <select id="editBadge">
+                            <option value="">Без значка</option>
+                            <option value="vip">VIP</option>
+                            <option value="hit">HIT</option>
+                            <option value="sale">SALE</option>
+                            <option value="new">NEW</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" onclick="saveEdit()">
+                            <i class="fas fa-save"></i> Сохранить
+                        </button>
+                        <button class="btn btn-secondary" onclick="closeEditModal()">
+                            <i class="fas fa-times"></i> Отмена
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Вкладка масок -->
+        <div id="masks" class="tab-content">
+            <div class="card">
+                <h3 class="card-title"><i class="fas fa-plus"></i> Добавить маску</h3>
+                <form id="addMaskForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>ID маски (латиница, например AAABBCC)</label>
+                            <input type="text" id="maskId" placeholder="AAABBCC" required pattern="[A-Z]+">
+                        </div>
+                        <div class="form-group">
+                            <label>Название маски (например AAA-BB-CC)</label>
+                            <input type="text" id="maskName" placeholder="AAA-BB-CC" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Описание</label>
+                        <input type="text" id="maskDescription" placeholder="Описание паттерна">
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Добавить маску
+                    </button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title"><i class="fas fa-layer-group"></i> Список масок</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Название</th>
+                                <th>Описание</th>
+                                <th>Кол-во номеров</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="masksTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Вкладка экспорта -->
+        <div id="export" class="tab-content">
+            <div class="card">
+                <h3 class="card-title"><i class="fas fa-download"></i> Экспорт данных</h3>
+                <p style="color: #aaa; margin-bottom: 20px;">
+                    Скачайте текущие данные в формате JavaScript для замены файла data.js
+                </p>
+                <div class="export-section">
+                    <button class="btn btn-primary" onclick="exportData()">
+                        <i class="fas fa-download"></i> Скачать data.js
+                    </button>
+                    <button class="btn btn-secondary" onclick="copyToClipboard()">
+                        <i class="fas fa-copy"></i> Копировать в буфер
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title"><i class="fas fa-upload"></i> Импорт данных</h3>
+                <p style="color: #aaa; margin-bottom: 20px;">
+                    Загрузите файл data.js для импорта данных
+                </p>
+                <div class="form-group">
+                    <input type="file" id="importFile" accept=".js" style="display: none;">
+                    <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">
+                        <i class="fas fa-upload"></i> Выбрать файл
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title"><i class="fas fa-code"></i> Предпросмотр data.js</h3>
+                <pre id="dataPreview" style="background: #0f0f23; padding: 20px; border-radius: 8px; overflow-x: auto; font-size: 12px; max-height: 400px; overflow-y: auto;"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        // Локальные копии данных
+        let localMasksData = [...masksData];
+        let localNumbersData = [...numbersData];
+
+        // Загрузка из localStorage (с проверкой актуальности данных)
+        function loadFromStorage() {
+            const savedMasks = localStorage.getItem('bestnomer_masks');
+            const savedNumbers = localStorage.getItem('bestnomer_numbers');
+            
+            if (savedMasks) {
+                localMasksData = JSON.parse(savedMasks);
+            }
+            if (savedNumbers) {
+                const parsed = JSON.parse(savedNumbers);
+                // Проверяем, есть ли у данных цены - если нет, используем data.js
+                if (parsed.length > 0 && parsed[0].price !== undefined) {
+                    localNumbersData = parsed;
+                } else {
+                    // Данные устарели, используем свежие из data.js и сохраняем
+                    saveToStorage();
+                }
+            }
+        }
+
+        // Сохранение в localStorage
+        function saveToStorage() {
+            localStorage.setItem('bestnomer_masks', JSON.stringify(localMasksData));
+            localStorage.setItem('bestnomer_numbers', JSON.stringify(localNumbersData));
+        }
+
+        // Показать уведомление
+        function showAlert(message, type = 'success') {
+            const alert = document.getElementById('alert');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            alert.style.display = 'block';
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 3000);
+        }
+
+        // Обновить статистику
+        function updateStats() {
+            document.getElementById('totalNumbers').textContent = localNumbersData.length;
+            document.getElementById('totalMasks').textContent = localMasksData.length;
+            document.getElementById('totalTariffs').textContent = tariffsData.length;
+        }
+
+        // Обновить выпадающий список масок
+        function updateMaskSelect() {
+            const select = document.getElementById('numberMask');
+            select.innerHTML = '<option value="">Выберите маску</option>';
+            localMasksData.forEach(mask => {
+                select.innerHTML += `<option value="${mask.id}">${mask.name}</option>`;
+            });
+        }
+
+        // Отрисовка таблицы номеров
+        function renderNumbersTable() {
+            const tbody = document.getElementById('numbersTableBody');
+            tbody.innerHTML = '';
+            
+            localNumbersData.forEach((num, index) => {
+                const mask = localMasksData.find(m => m.id === num.mask);
+                const maskName = mask ? mask.name : num.mask;
+                const badgeHTML = num.badge ? `<span class="badge badge-${num.badge}">${num.badge.toUpperCase()}</span>` : '-';
+                
+                tbody.innerHTML += `
+                    <tr data-number="${num.number}">
+                        <td>${num.id}</td>
+                        <td><strong>${num.number}</strong></td>
+                        <td>${num.price || '-'}</td>
+                        <td><span class="badge badge-mask">${maskName}</span></td>
+                        <td>${badgeHTML}</td>
+                        <td class="actions">
+                            <button class="btn btn-secondary btn-sm" onclick="openEditModal(${index})" title="Редактировать">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteNumber(${index})" title="Удалить">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Отрисовка таблицы масок
+        function renderMasksTable() {
+            const tbody = document.getElementById('masksTableBody');
+            tbody.innerHTML = '';
+            
+            localMasksData.forEach((mask, index) => {
+                const count = localNumbersData.filter(n => n.mask === mask.id).length;
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td><code>${mask.id}</code></td>
+                        <td><strong>${mask.name}</strong></td>
+                        <td>${mask.description || '-'}</td>
+                        <td>${count}</td>
+                        <td class="actions">
+                            <button class="btn btn-danger btn-sm" onclick="deleteMask(${index})" ${count > 0 ? 'disabled title="Сначала удалите номера"' : ''}>
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Добавить номер
+        document.getElementById('addNumberForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const phone = document.getElementById('numberPhone').value.trim();
+            const price = document.getElementById('numberPrice').value.trim();
+            const mask = document.getElementById('numberMask').value;
+            const badge = document.getElementById('numberBadge').value;
+            
+            if (!phone || !mask || !price) {
+                showAlert('Заполните все обязательные поля', 'error');
+                return;
+            }
+            
+            const newId = localNumbersData.length > 0 
+                ? Math.max(...localNumbersData.map(n => n.id)) + 1 
+                : 1;
+            
+            localNumbersData.push({
+                id: newId,
+                mask: mask,
+                number: phone,
+                price: price,
+                badge: badge
+            });
+            
+            saveToStorage();
+            renderNumbersTable();
+            updateStats();
+            updateDataPreview();
+            
+            this.reset();
+            showAlert('Номер добавлен успешно!');
+        });
+
+        // Добавить маску
+        document.getElementById('addMaskForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('maskId').value.trim().toUpperCase();
+            const name = document.getElementById('maskName').value.trim();
+            const description = document.getElementById('maskDescription').value.trim();
+            
+            if (!id || !name) {
+                showAlert('Заполните обязательные поля', 'error');
+                return;
+            }
+            
+            if (localMasksData.find(m => m.id === id)) {
+                showAlert('Маска с таким ID уже существует', 'error');
+                return;
+            }
+            
+            localMasksData.push({
+                id: id,
+                name: name,
+                description: description
+            });
+            
+            saveToStorage();
+            renderMasksTable();
+            updateMaskSelect();
+            updateStats();
+            updateDataPreview();
+            
+            this.reset();
+            showAlert('Маска добавлена успешно!');
+        });
+
+        // Удалить номер
+        function deleteNumber(index) {
+            if (confirm('Удалить этот номер?')) {
+                localNumbersData.splice(index, 1);
+                saveToStorage();
+                renderNumbersTable();
+                updateStats();
+                updateDataPreview();
+                showAlert('Номер удалён');
+            }
+        }
+
+        // Удалить маску
+        function deleteMask(index) {
+            const mask = localMasksData[index];
+            const count = localNumbersData.filter(n => n.mask === mask.id).length;
+            
+            if (count > 0) {
+                showAlert('Сначала удалите все номера с этой маской', 'error');
+                return;
+            }
+            
+            if (confirm('Удалить эту маску?')) {
+                localMasksData.splice(index, 1);
+                saveToStorage();
+                renderMasksTable();
+                updateMaskSelect();
+                updateStats();
+                updateDataPreview();
+                showAlert('Маска удалена');
+            }
+        }
+
+        // Генерация data.js
+        function generateDataJS() {
+            let output = `
+const masksData = ${JSON.stringify(localMasksData, null, 4)};
+
+const numbersData = ${JSON.stringify(localNumbersData, null, 4)};
+
+const tariffsData = ${JSON.stringify(tariffsData, null, 4)};
+
+const TELEGRAM_ACCOUNT = "${TELEGRAM_ACCOUNT}";
+`;
+            return output;
+        }
+
+        // Обновить предпросмотр
+        function updateDataPreview() {
+            document.getElementById('dataPreview').textContent = generateDataJS();
+        }
+
+        // Экспорт данных
+        function exportData() {
+            const data = generateDataJS();
+            const blob = new Blob([data], { type: 'text/javascript' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'data.js';
+            a.click();
+            URL.revokeObjectURL(url);
+            showAlert('Файл data.js скачан!');
+        }
+
+        // Копировать в буфер
+        function copyToClipboard() {
+            const data = generateDataJS();
+            navigator.clipboard.writeText(data).then(() => {
+                showAlert('Скопировано в буфер обмена!');
+            });
+        }
+
+        // Импорт файла
+        document.getElementById('importFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const content = e.target.result;
+                    // Простой парсинг - ищем массивы
+                    const masksMatch = content.match(/const masksData = (\[[\s\S]*?\]);/);
+                    const numbersMatch = content.match(/const numbersData = (\[[\s\S]*?\]);/);
+                    
+                    if (masksMatch) {
+                        localMasksData = eval(masksMatch[1]);
+                    }
+                    if (numbersMatch) {
+                        localNumbersData = eval(numbersMatch[1]);
+                    }
+                    
+                    saveToStorage();
+                    renderAll();
+                    showAlert('Данные импортированы успешно!');
+                } catch (err) {
+                    showAlert('Ошибка при импорте файла', 'error');
+                    console.error(err);
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        // Переключение вкладок
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                this.classList.add('active');
+                document.getElementById(this.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Форматирование номера при вводе
+        document.getElementById('numberPhone').addEventListener('input', function() {
+            let value = this.value.replace(/\D/g, '');
+            if (value.startsWith('7')) value = value.slice(1);
+            if (value.startsWith('8')) value = value.slice(1);
+            
+            let formatted = '+7';
+            if (value.length > 0) formatted += ' (' + value.slice(0, 3);
+            if (value.length > 3) formatted += ') ' + value.slice(3, 6);
+            if (value.length > 6) formatted += '-' + value.slice(6, 8);
+            if (value.length > 8) formatted += '-' + value.slice(8, 10);
+            
+            this.value = formatted;
+        });
+
+        // Поиск по номеру
+        function filterNumbers() {
+            const searchValue = document.getElementById('searchNumber').value.toLowerCase().replace(/\D/g, '');
+            const rows = document.querySelectorAll('#numbersTableBody tr');
+            
+            rows.forEach(row => {
+                const number = row.dataset.number.replace(/\D/g, '');
+                if (number.includes(searchValue) || searchValue === '') {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // Открыть модальное окно редактирования
+        function openEditModal(index) {
+            const num = localNumbersData[index];
+            document.getElementById('editIndex').value = index;
+            document.getElementById('editPhone').value = num.number;
+            document.getElementById('editPrice').value = num.price || '';
+            document.getElementById('editBadge').value = num.badge || '';
+            
+            // Заполняем выпадающий список масок
+            const editMask = document.getElementById('editMask');
+            editMask.innerHTML = '';
+            localMasksData.forEach(mask => {
+                editMask.innerHTML += `<option value="${mask.id}" ${mask.id === num.mask ? 'selected' : ''}>${mask.name}</option>`;
+            });
+            
+            document.getElementById('editModal').style.display = 'flex';
+        }
+
+        // Закрыть модальное окно
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        // Сохранить изменения
+        function saveEdit() {
+            const index = parseInt(document.getElementById('editIndex').value);
+            
+            localNumbersData[index].number = document.getElementById('editPhone').value;
+            localNumbersData[index].price = document.getElementById('editPrice').value;
+            localNumbersData[index].mask = document.getElementById('editMask').value;
+            localNumbersData[index].badge = document.getElementById('editBadge').value || null;
+            
+            saveToStorage();
+            renderAll();
+            closeEditModal();
+            showAlert('Номер успешно обновлён!');
+        }
+
+        // Отрисовать всё
+        function renderAll() {
+            renderNumbersTable();
+            renderMasksTable();
+            updateMaskSelect();
+            updateStats();
+            updateDataPreview();
+        }
+
+        // Инициализация
+        loadFromStorage();
+        renderAll();
+    </script>
+</body>
+</html>
