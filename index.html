@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>bestnomer.ru - Подбираем номера</title>
+    <title>Bestnomer.ru - Подбираем номера</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -23,15 +23,16 @@
                     <div class="logo-section">
                          <i class="material-icons logo-icon">phone</i>
                           <div class="logo-text">
-                          <h1 class="logo">bestnomer.ru</h1>
+                          <h1 class="logo">Bestnomer.ru</h1>
                           <p class="logo-subtitle">КРАСИВЫЕ НОМЕРА И ТАРИФЫ</p>
                         </div>
                     </div>
                     
                     <!-- Навигация для десктопа -->
                     <nav class="nav">
-                        <a href="#numbers" class="nav-link">Номера</a>
                         <a href="#tariffs" class="nav-link">Тарифы</a>
+                        <a href="#numbers" class="nav-link">Номера</a>
+                        <a href="#reviews" class="nav-link">Отзывы</a>
                         <a href="#features" class="nav-link">Преимущества</a>
                         <a href="#operators" class="nav-link">Операторы</a>
                     </nav>
@@ -51,8 +52,9 @@
         <!-- Мобильное меню -->
         <div class="mobile-menu" id="mobileMenu">
             <nav class="mobile-nav">
-                <a href="#numbers" class="mobile-nav-link">Номера</a>
                 <a href="#tariffs" class="mobile-nav-link">Тарифы</a>
+                <a href="#numbers" class="mobile-nav-link">Номера</a>
+                <a href="#reviews" class="mobile-nav-link">Отзывы</a>
                 <a href="#features" class="mobile-nav-link">Преимущества</a>
                 <a href="#operators" class="mobile-nav-link">Операторы</a>
                <button class="order-btn mobile-order-btn" id="orderBtnMobile">ЗАКАЗАТЬ</button>
@@ -68,6 +70,9 @@
                     </p>
                     
                     <div class="search-section">
+                        <div class="search-prompt">
+                            Какой номер вы хотите себе? Введите и мы вам ответим. Это бесплатно)
+                        </div>
                         <div class="search-box">
                             <input type="text" class="search-input" placeholder="+7 (000) 000-00-00" id="phoneInput">
                             <button class="search-btn" id="searchBtn">
@@ -75,21 +80,81 @@
                                 <i class="material-icons">search</i>
                             </button>
                         </div>
+                        
+                        <!-- Кнопки масок под поиском -->
+                        <div class="masks-container" id="masksContainer">
+                        </div>
                     </div>
                     
-                    <div class="tags">
-                        <span class="tag">ЗЕРКАЛЬНЫЕ</span>
-                        <span class="tag">ПОВТОРЯЮЩИЕСЯ</span>
-                        <span class="tag">КРАСИВЫЕ</span>
-                        <span class="tag">СЕРЕБРЯНЫЕ</span>
-                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Секция преимуществ -->
-        <section class="features-icons-section" id="features">
+        <!-- Секция тарифов -->
+        <section class="tariffs-section" id="tariffs">
             <div class="container">
+                <h2 class="section-title">ТАРИФЫ</h2>
+          
+                <div class="tariffs-wrapper">
+                    <button class="slider-nav-btn prev-btn" id="prevTariff">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    
+                    <div class="tariffs-container">
+                        <div class="tariffs-slider" id="tariffsSlider">
+                        </div>
+                    </div>
+                    
+                    <button class="slider-nav-btn next-btn" id="nextTariff">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+
+                <div class="pick-tariff-container">
+                    <button class="pick-tariff-btn" id="pickTariffBtn">ПОДОБРАТЬ ТАРИФ</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Секция номеров -->
+        <section class="numbers-section" id="numbers">
+            <div class="container">
+                <h2 class="section-title">НОМЕРА</h2>
+                
+                <!-- Кнопки масок в секции номеров -->
+                <div class="masks-container masks-in-numbers" id="masksContainerNumbers">
+                </div>
+                
+                <div class="numbers-container">
+                    <div class="numbers-grid" id="numbersGrid">
+                    </div>
+                </div>
+            
+                <div class="view-all-container">
+                    <button class="view-all-btn" id="viewAllBtn">
+                        <span>СМОТРЕТЬ ВСЕ НОМЕРА</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Секция отзывов -->
+        <section class="reviews-section" id="reviews">
+            <div class="container">
+                <h2 class="section-title">ОТЗЫВЫ</h2>
+                <p class="reviews-subtitle">Читайте реальные отзывы наших клиентов</p>
+                <a href="https://t.me/bestnomer/reviews" target="_blank" class="reviews-link-btn">
+                    <i class="fab fa-telegram"></i>
+                    <span>Перейти к отзывам в Telegram</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Секция преимуществ -->
+        <section class="features-section" id="features">
+            <div class="container">
+                <h2 class="section-title">ПРЕИМУЩЕСТВА</h2>
                 <div class="features-grid">
                     <div class="feature-item">
                         <div class="feature-icon-box">
@@ -131,71 +196,30 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- Секция операторов -->
-                <div class="operators-section" id="operators">
-                    <p class="operators-title">Работаем с операторами:</p>
-                    <div class="operators-grid">
-                        <div class="operator-item">
-                            <img src="images/beline.png" alt="Билайн" class="operator-logo-img">
-                        </div>
-                        <div class="operator-item">
-                            <img src="images/megafon-vertical-logo.png" alt="Мегафон" class="operator-logo-img">
-                        </div>
-                        <div class="operator-item">
-                            <img src="images/MTS.png" alt="МТС" class="operator-logo-img">
-                        </div>
-                        <div class="operator-item">
-                            <img src="images/yota-logo.png" alt="YOTA" class="operator-logo-img">
-                        </div>
-                        <div class="operator-item">
-                            <img src="images/tele-2-logo.png" alt="Tele2" class="operator-logo-img">
-                        </div>
-                    </div>
-                </div>
             </div>
         </section>
 
-        <section class="numbers-section" id="numbers">
+        <!-- Секция операторов -->
+        <section class="operators-section" id="operators">
             <div class="container">
-                <h2 class="section-title">НОМЕРА</h2>
-                
-                <div class="numbers-container">
-                    <div class="numbers-grid" id="numbersGrid">
+                <h2 class="section-title">ОПЕРАТОРЫ</h2>
+                <p class="operators-subtitle">Работаем с ведущими операторами связи</p>
+                <div class="operators-grid">
+                    <div class="operator-item">
+                        <img src="images/beline.png" alt="Билайн" class="operator-logo-img">
                     </div>
-                </div>
-            
-                <div class="view-all-container">
-                    <button class="view-all-btn" id="viewAllBtn">
-                        <span>СМОТРЕТЬ ВСЕ НОМЕРА</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <section class="tariffs-section" id="tariffs">
-            <div class="container">
-                <h2 class="section-title">ТАРИФЫ</h2>
-          
-                <div class="tariffs-wrapper">
-                    <button class="slider-nav-btn prev-btn" id="prevTariff">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    
-                    <div class="tariffs-container">
-                        <div class="tariffs-slider" id="tariffsSlider">
-                        </div>
+                    <div class="operator-item">
+                        <img src="images/megafon-vertical-logo.png" alt="Мегафон" class="operator-logo-img">
                     </div>
-                    
-                    <button class="slider-nav-btn next-btn" id="nextTariff">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-                
-
-                <div class="pick-tariff-container">
-                    <button class="pick-tariff-btn" id="pickTariffBtn">ПОДОБРАТЬ ТАРИФ</button>
+                    <div class="operator-item">
+                        <img src="images/MTS.png" alt="МТС" class="operator-logo-img">
+                    </div>
+                    <div class="operator-item">
+                        <img src="images/yota-logo.png" alt="YOTA" class="operator-logo-img">
+                    </div>
+                    <div class="operator-item">
+                        <img src="images/tele-2-logo.png" alt="Tele2" class="operator-logo-img">
+                    </div>
                 </div>
             </div>
         </section>
@@ -205,7 +229,7 @@
                 <div class="footer-content">
                     <div class="footer-main">
                         <div class="footer-logo">
-                            <h2 class="logo">bestnomer.ru</h2>
+                            <h2 class="logo">Bestnomer.ru</h2>
                             <p class="footer-subtitle">красивые номера и тарифы</p>
                         </div>
                         
@@ -234,7 +258,7 @@
                     </div>
                     
                     <div class="footer-bottom">
-                        <p class="copyright">© 2026 bestnomer.ru. Все права защищены.</p>
+                        <p class="copyright">© 2026 Bestnomer.ru. Все права защищены.</p>
                          
                     </div>
                     <div class="payment-methods">
