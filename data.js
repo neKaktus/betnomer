@@ -1,179 +1,207 @@
 
+const masksData = [
+    {
+        id: "AAAAAAA",
+        name: "AAA-AA-AA",
+        description: "Семь одинаковых цифр"
+    },
+    {
+        id: "ABCABAB",
+        name: "ABC-AB-AB",
+        description: "Повторяющийся паттерн"
+    },
+    {
+        id: "ABCABCA",
+        name: "ABC-AB-CA",
+        description: "Зеркальный паттерн"
+    },
+    {
+        id: "AABBCCD",
+        name: "AAB-BC-CD",
+        description: "Последовательные пары"
+    },
+    {
+        id: "ABCDABC",
+        name: "ABC-DA-BC",
+        description: "Комбинированный паттерн"
+    }
+];
+
 const numbersData = [
     {
         id: 1,
-        category: "Абсолютные",
+        mask: "AAAAAAA",
         number: "+7 (999) 777-77-77",
-        badge: "Золотые",
-        type: "absolute"
+        price: "150 000 ₽",
+        badge: "vip"
     },
     {
         id: 2,
-        category: "Абсолютные",
+        mask: "AAAAAAA",
         number: "+7 (905) 555-55-55",
-        badge: "Золотые",
-        type: "absolute"
+        price: "85 000 ₽",
+        badge: "hit"
     },
     {
         id: 3,
-        category: "Повторяющиеся",
-        number: "+7 (900) 393-93-93",
-        badge: "",
-        type: "repeat"
+        mask: "AAAAAAA",
+        number: "+7 (916) 111-11-11",
+        price: "120 000 ₽",
+        badge: "vip"
     },
     {
         id: 4,
-        category: "Повторяющиеся",
-        number: "+7 (977) 600-00-00",
-        badge: "",
-        type: "repeat"
+        mask: "AAAAAAA",
+        number: "+7 (985) 222-22-22",
+        price: "95 000 ₽",
+        badge: ""
     },
     {
         id: 5,
-        category: "Красивые",
-        number: "+7 (916) 111-11-11",
-        badge: "",
-        type: "beautiful"
+        mask: "AAAAAAA",
+        number: "+7 (903) 333-33-33",
+        price: "75 000 ₽",
+        badge: "sale"
     },
     {
         id: 6,
-        category: "Красивые",
-        number: "+7 (985) 222-22-22",
-        badge: "",
-        type: "beautiful"
+        mask: "AAAAAAA",
+        number: "+7 (999) 888-88-88",
+        price: "180 000 ₽",
+        badge: "vip"
     },
     {
         id: 7,
-        category: "Зеркальные",
-        number: "+7 (903) 333-33-33",
-        badge: "",
-        type: "mirror"
+        mask: "AAAAAAA",
+        number: "+7 (999) 999-99-99",
+        price: "500 000 ₽",
+        badge: "vip"
     },
     {
         id: 8,
-        category: "Зеркальные",
-        number: "+7 (926) 444-44-44",
-        badge: "",
-        type: "mirror"
+        mask: "ABCABAB",
+        number: "+7 (900) 393-93-93",
+        price: "25 000 ₽",
+        badge: "new"
     },
     {
         id: 9,
-        category: "Серебряные",
-        number: "+7 (909) 555-55-55",
-        badge: "Серебраные",
-        type: "silver"
+        mask: "ABCABAB",
+        number: "+7 (900) 101-01-01",
+        price: "35 000 ₽",
+        badge: "hit"
     },
     {
         id: 10,
-        category: "Серебряные",
-        number: "+7 (925) 666-66-66",
-        badge: "Серебраные",
-        type: "silver"
+        mask: "ABCABAB",
+        number: "+7 (977) 202-02-02",
+        price: "28 000 ₽",
+        badge: ""
     },
     {
         id: 11,
-        category: "Абсолютные",
-        number: "+7 (999) 888-88-88",
-        badge: "Золотые",
-        type: "absolute"
+        mask: "ABCABAB",
+        number: "+7 (900) 909-09-09",
+        price: "45 000 ₽",
+        badge: "sale"
     },
     {
         id: 12,
-        category: "Абсолютные",
-        number: "+7 (905) 111-11-11",
-        badge: "Золотые",
-        type: "absolute"
+        mask: "ABCABAB",
+        number: "+7 (977) 808-08-08",
+        price: "32 000 ₽",
+        badge: ""
     },
     {
         id: 13,
-        category: "Повторяющиеся",
-        number: "+7 (900) 101-01-01",
-        badge: "",
-        type: "repeat"
+        mask: "ABCABCA",
+        number: "+7 (926) 444-44-44",
+        price: "55 000 ₽",
+        badge: "hit"
     },
     {
         id: 14,
-        category: "Повторяющиеся",
-        number: "+7 (977) 202-02-02",
-        badge: "",
-        type: "repeat"
+        mask: "ABCABCA",
+        number: "+7 (909) 555-55-55",
+        price: "48 000 ₽",
+        badge: ""
     },
     {
         id: 15,
-        category: "Красивые",
-        number: "+7 (916) 303-03-03",
-        badge: "",
-        type: "beautiful"
+        mask: "ABCABCA",
+        number: "+7 (925) 666-66-66",
+        price: "62 000 ₽",
+        badge: "new"
     },
     {
         id: 16,
-        category: "Красивые",
-        number: "+7 (985) 404-04-04",
-        badge: "",
-        type: "beautiful"
+        mask: "ABCABCA",
+        number: "+7 (916) 303-03-03",
+        price: "38 000 ₽",
+        badge: "sale"
     },
     {
         id: 17,
-        category: "Зеркальные",
-        number: "+7 (903) 505-05-05",
-        badge: "",
-        type: "mirror"
+        mask: "AABBCCD",
+        number: "+7 (977) 600-00-00",
+        price: "42 000 ₽",
+        badge: ""
     },
     {
         id: 18,
-        category: "Зеркальные",
-        number: "+7 (926) 606-06-06",
-        badge: "",
-        type: "mirror"
+        mask: "AABBCCD",
+        number: "+7 (905) 111-11-11",
+        price: "58 000 ₽",
+        badge: "hit"
     },
     {
         id: 19,
-        category: "Серебряные",
-        number: "+7 (909) 707-07-07",
-        badge: "Серебраные",
-        type: "silver"
+        mask: "AABBCCD",
+        number: "+7 (985) 404-04-04",
+        price: "22 000 ₽",
+        badge: "sale"
     },
     {
         id: 20,
-        category: "Серебряные",
-        number: "+7 (925) 808-08-08",
-        badge: "Серебраные",
-        type: "silver"
+        mask: "AABBCCD",
+        number: "+7 (903) 505-05-05",
+        price: "27 000 ₽",
+        badge: ""
     },
     {
         id: 21,
-        category: "Абсолютные",
-        number: "+7 (999) 999-99-99",
-        badge: "Золотые",
-        type: "absolute"
+        mask: "ABCDABC",
+        number: "+7 (926) 606-06-06",
+        price: "33 000 ₽",
+        badge: "new"
     },
     {
         id: 22,
-        category: "Абсолютные",
-        number: "+7 (905) 000-00-00",
-        badge: "Золотые",
-        type: "absolute"
+        mask: "ABCDABC",
+        number: "+7 (909) 707-07-07",
+        price: "29 000 ₽",
+        badge: ""
     },
     {
         id: 23,
-        category: "Повторяющиеся",
-        number: "+7 (900) 909-09-09",
-        badge: "",
-        type: "repeat"
+        mask: "ABCDABC",
+        number: "+7 (925) 808-08-08",
+        price: "36 000 ₽",
+        badge: "hit"
     },
     {
         id: 24,
-        category: "Повторяющиеся",
-        number: "+7 (977) 808-08-08",
-        badge: "",
-        type: "repeat"
+        mask: "ABCDABC",
+        number: "+7 (905) 000-00-00",
+        price: "95 000 ₽",
+        badge: "vip"
     },
     {
         id: 25,
-        category: "Красивые",
+        mask: "ABCDABC",
         number: "+7 (916) 707-07-07",
-        badge: "",
-        type: "beautiful"
+        price: "31 000 ₽",
+        badge: ""
     }
 ];
 
