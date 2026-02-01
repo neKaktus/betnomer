@@ -9,9 +9,9 @@ const phoneInput = document.getElementById('phoneInput');
 const pickTariffBtn = document.getElementById('pickTariffBtn');
 const orderBtn = document.getElementById('orderBtn');
 const callbackBtn = document.getElementById('callbackBtn');
-const mobileMenuBtn = document.getElementById('mobileMenuBtn'); // Добавляем
-const mobileMenu = document.getElementById('mobileMenu'); // Добавляем
-const orderBtnMobile = document.getElementById('orderBtnMobile'); // Добавляем кнопку заказа в мобильном меню
+const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+const mobileMenu = document.getElementById('mobileMenu');
+const orderBtnMobile = document.getElementById('orderBtnMobile');
 
 let currentNumbersDisplayed = 4;
 let currentTariffIndex = 0;
@@ -20,6 +20,32 @@ let isMobile = false;
 let isScrolling = false;
 
 const TELEGRAM_USERNAME = "ne_kaktus";
+
+// Загрузка данных из localStorage (синхронизация с админ-панелью)
+function loadDataFromStorage() {
+    const savedMasks = localStorage.getItem('bestnomer_masks');
+    const savedNumbers = localStorage.getItem('bestnomer_numbers');
+    
+    if (savedMasks) {
+        try {
+            const parsedMasks = JSON.parse(savedMasks);
+            if (Array.isArray(parsedMasks) && parsedMasks.length > 0) {
+                masksData.length = 0;
+                parsedMasks.forEach(m => masksData.push(m));
+            }
+        } catch(e) { console.log('Error loading masks from storage'); }
+    }
+    
+    if (savedNumbers) {
+        try {
+            const parsedNumbers = JSON.parse(savedNumbers);
+            if (Array.isArray(parsedNumbers) && parsedNumbers.length > 0) {
+                numbersData.length = 0;
+                parsedNumbers.forEach(n => numbersData.push(n));
+            }
+        } catch(e) { console.log('Error loading numbers from storage'); }
+    }
+}
 
 function sendToTelegram(message) {
     const url = `https://t.me/${TELEGRAM_USERNAME}?text=${encodeURIComponent(message)}`;
@@ -81,16 +107,16 @@ document.addEventListener('DOMContentLoaded', function() {
     checkMobile();
     updateSwipeHint();
     
+    // Загружаем данные из localStorage (если были изменены через админ-панель)
+    loadDataFromStorage();
+    
+    renderMasks();
     renderNumbers();
     
-    viewAllBtn.addEventListener('click', function() {
-        currentNumbersDisplayed += 2;
-        renderNumbers();
-        
-        if (currentNumbersDisplayed >= numbersData.length) {
-            this.style.display = 'none';
-        }
-    });
+    // Скрываем кнопку "смотреть все" так как номера группируются по маскам
+    if (viewAllBtn) {
+        viewAllBtn.style.display = 'none';
+    }
 
     renderTariffs();
     updateTariffsSlider();
@@ -373,25 +399,144 @@ function updateSwipeHint() {
     }
 }
 
+function renderMasks() {
+    // Рендерим маски в оба контейнера (hero и numbers секция)
+    const containers = [
+        document.getElementById('masksContainer'),
+        document.getElementById('masksContainerNumbers')
+    ];
+    
+    containers.forEach(container => {
+        if (!container) return;
+        
+        container.innerHTML = '';
+        masksData.forEach(mask => {
+            const maskBtn = document.createElement('button');
+            maskBtn.className = 'mask-btn';
+            maskBtn.dataset.mask = mask.id;
+            maskBtn.innerHTML = `<span class="mask-name">${mask.name}</span>`;
+            maskBtn.addEventListener('click', () => {
+                scrollToMask(mask.id);
+            });
+            container.appendChild(maskBtn);
+        });
+    });
+}
+
+function scrollToMask(maskId) {
+    const maskSection = document.getElementById(`mask-${maskId}`);
+    if (maskSection) {
+        maskSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+function getBadgeHTML(badge) {
+    if (!badge) return '';
+    const badgeColors = {
+        'vip': 'badge-vip',
+        'hit': 'badge-hit',
+        'sale': 'badge-sale',
+        'new': 'badge-new'
+    };
+    const badgeClass = badgeColors[badge] || '';
+    return `<span class="number-badge ${badgeClass}">${badge.toUpperCase()}</span>`;
+}
+
+// Приоритет плашек для сортировки (чем меньше число - тем выше приоритет)
+function getBadgePriority(badge) {
+    const priorities = {
+        'vip': 1,
+        'hit': 2,
+        'sale': 3,
+        'new': 4
+    };
+    return priorities[badge] || 99;
+}
+
+// Хранит количество показанных номеров для каждой маски
+const shownNumbersCount = {};
+const NUMBERS_PER_LOAD = 4;
+
 function renderNumbers() {
     if (!numbersGrid) return;
     numbersGrid.innerHTML = '';
-    numbersData.slice(0, currentNumbersDisplayed).forEach(number => {
-        const card = document.createElement('div');
-        card.className = 'number-card';
-        card.innerHTML = `
-            <div class="card-header">
-                <span class="category-label">${number.category}</span>
-                ${number.badge ? `<span class="golden-badge">${number.badge}</span>` : ''}
-            </div>
-            <div class="phone-number">${number.number}</div>
-            <div class="card-footer">
-                <button class="select-number-btn" onclick="sendToTelegram('Номер: ${number.number}')">
-                    Выбрать номер
-                </button>
-            </div>
+    
+    // Группируем номера по маскам
+    const numbersByMask = {};
+    numbersData.forEach(number => {
+        if (!numbersByMask[number.mask]) {
+            numbersByMask[number.mask] = [];
+        }
+        numbersByMask[number.mask].push(number);
+    });
+    
+    // Отображаем номера сгруппированные по маскам
+    masksData.forEach(mask => {
+        let maskNumbers = numbersByMask[mask.id] || [];
+        if (maskNumbers.length === 0) return;
+        
+        // Инициализируем счетчик показанных номеров
+        if (!shownNumbersCount[mask.id]) {
+            shownNumbersCount[mask.id] = NUMBERS_PER_LOAD;
+        }
+        
+        // Сортируем: номера с плашками выше, потом по приоритету плашки
+        maskNumbers.sort((a, b) => {
+            return getBadgePriority(a.badge) - getBadgePriority(b.badge);
+        });
+        
+        // Заголовок группы
+        const maskGroup = document.createElement('div');
+        maskGroup.className = 'mask-group';
+        maskGroup.id = `mask-${mask.id}`;
+        
+        const maskHeader = document.createElement('div');
+        maskHeader.className = 'mask-group-header';
+        maskHeader.innerHTML = `
+            <span class="mask-group-title">${mask.name}</span>
+            <span class="mask-group-count">${maskNumbers.length} номеров</span>
         `;
-        numbersGrid.appendChild(card);
+        maskGroup.appendChild(maskHeader);
+        
+        // Номера в группе - горизонтальные карточки в одну колонку
+        const numbersInGroup = document.createElement('div');
+        numbersInGroup.className = 'numbers-in-group';
+        
+        // Показываем только нужное количество номеров
+        const visibleNumbers = maskNumbers.slice(0, shownNumbersCount[mask.id]);
+        
+        visibleNumbers.forEach(number => {
+            const card = document.createElement('div');
+            card.className = 'number-card';
+            card.innerHTML = `
+                ${getBadgeHTML(number.badge)}
+                <div class="phone-number">${number.number}</div>
+                <div class="number-price">${number.price || ''}</div>
+                <div class="card-footer">
+                    <button class="select-number-btn" onclick="sendToTelegram('Номер: ${number.number}, Цена: ${number.price}')">
+                        Выбрать номер
+                    </button>
+                </div>
+            `;
+            numbersInGroup.appendChild(card);
+        });
+        
+        maskGroup.appendChild(numbersInGroup);
+        
+        // Кнопка "Смотреть еще" если есть еще номера
+        if (maskNumbers.length > shownNumbersCount[mask.id]) {
+            const remaining = maskNumbers.length - shownNumbersCount[mask.id];
+            const showMoreBtn = document.createElement('button');
+            showMoreBtn.className = 'show-more-btn';
+            showMoreBtn.innerHTML = `<span>Смотреть еще</span> <i class="fas fa-chevron-down"></i>`;
+            showMoreBtn.onclick = () => {
+                shownNumbersCount[mask.id] += NUMBERS_PER_LOAD;
+                renderNumbers();
+            };
+            maskGroup.appendChild(showMoreBtn);
+        }
+        
+        numbersGrid.appendChild(maskGroup);
     });
 }
 
