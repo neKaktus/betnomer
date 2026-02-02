@@ -715,17 +715,39 @@ body {
 }
 
 .tariff-card {
+    position: relative;
     flex: 0 0 calc(33.333% - 27px);
     min-width: calc(33.333% - 27px);
     background: linear-gradient(145deg, rgba(26, 21, 15, 0.92), rgba(13, 11, 8, 0.92));
     border-radius: 25px;
-    padding: 45px;
+    padding: 48px 45px 45px;
+    padding-top: 75px;
     border: 1px solid rgba(255, 255, 255, 0.08);
     transition: transform 0.3s ease;
     box-shadow: var(--shadow-soft);
     display: flex;
     flex-direction: column;
     touch-action: pan-y;
+}
+
+/* Плашка цены на карточке тарифа */
+.tariff-price-badge {
+    position: absolute;
+    top: 31px;
+    right: 25px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--primary-color);
+    background: rgba(255, 215, 0, 0.15);
+    padding: 6px 14px;
+    border-radius: 8px;
+}
+
+/* Плашка badge на карточке тарифа */
+.tariff-card .number-badge {
+    position: absolute;
+    top: 10px;
+    right: 25px;
 }
 
 .tariff-card:hover {
@@ -1269,8 +1291,627 @@ body {
     font-weight: 500;
     text-align: center;
     flex: 1;
+}/* ==================== МОБИЛЬНАЯ АДАПТАЦИЯ ДЛЯ КАРТОЧЕК НОМЕРОВ ==================== */
+
+@media (max-width: 768px) {
+    /* КАРТОЧКИ НОМЕРОВ - МЕНЬШЕ ПО РАЗМЕРУ */
+    .number-card.mobile {
+        padding: 15px 12px !important;
+        min-height: auto !important;
+        padding-top: 50px !important;
+        margin-bottom: 8px !important;
+        border-radius: 10px !important;
+        gap: 8px !important;
+    }
+    
+    .number-card.mobile .phone-number {
+        font-size: 16px !important;
+        padding: 10px 8px !important;
+        min-height: 50px !important;
+        margin: 8px 0 !important;
+        letter-spacing: 0.5px !important;
+    }
+    
+    .number-card.mobile .number-price {
+        font-size: 13px !important;
+        padding: 4px 8px !important;
+        top: 15px !important;
+        right: 12px !important;
+        border-radius: 4px !important;
+    }
+    
+    .number-card.mobile .select-number-btn {
+        padding: 8px 12px !important;
+        font-size: 11px !important;
+        border-radius: 6px !important;
+        margin-top: 5px !important;
+    }
+    
+    .number-card.mobile .number-badge {
+        top: 8px !important;
+        right: 12px !important;
+        font-size: 9px !important;
+        padding: 2px 6px !important;
+        border-radius: 3px !important;
+    }
+    
+    /* СЕТКА НОМЕРОВ - 1 КОЛОНКА */
+    .numbers-in-group {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+    }
+    
+    /* ГРУППЫ МАСОК */
+    .mask-group {
+        margin-bottom: 25px !important;
+    }
+    
+    .mask-group-header {
+        padding: 10px 15px !important;
+        margin-bottom: 12px !important;
+        border-radius: 8px !important;
+    }
+    
+    .mask-group-title {
+        font-size: 15px !important;
+        letter-spacing: 1px !important;
+    }
+    
+    .mask-group-count {
+        font-size: 11px !important;
+    }
+    
+    /* КНОПКА "СМОТРЕТЬ ЕЩЕ" */
+    .show-more-btn {
+        padding: 10px 15px !important;
+        margin-top: 15px !important;
+        font-size: 12px !important;
+        border-radius: 8px !important;
+    }
+    
+    /* ТАРИФЫ - АДАПТИВНЫЕ СТИЛИ */
+    .tariff-card.mobile {
+        padding: 20px 15px !important;
+        min-height: auto !important;
+        margin: 0 8px !important;
+        border-radius: 12px !important;
+    }
+    
+    .tariff-price-badge.mobile {
+        font-size: 16px !important;
+        padding: 5px 10px !important;
+        top: 25px !important;
+        right: 15px !important;
+        border-radius: 6px !important;
+    }
+    
+    .operator-name.mobile {
+        font-size: 16px !important;
+        margin: 10px 0 !important;
+        padding-top: 10px !important;
+    }
+    
+    .tariff-info.mobile {
+        font-size: 13px !important;
+        margin-bottom: 15px !important;
+        line-height: 1.4 !important;
+    }
+    
+    .connect-tariff-btn.mobile {
+        padding: 10px 15px !important;
+        font-size: 13px !important;
+        border-radius: 8px !important;
+        margin-top: 10px !important;
+    }
+    
+    .tariff-card.mobile .number-badge {
+        top: 10px !important;
+        right: 15px !important;
+        font-size: 9px !important;
+        padding: 3px 8px !important;
+    }
+    
+    /* КОНТЕЙНЕР ТАРИФОВ */
+    .tariffs-container {
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: none !important;
+    }
+    
+    .tariffs-container::-webkit-scrollbar {
+        display: none !important;
+    }
+    
+    .tariffs-slider {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        gap: 12px !important;
+        padding: 15px 8px !important;
+    }
+    
+    .tariff-card {
+        flex: 0 0 auto !important;
+        width: 85vw !important;
+        min-width: 260px !important;
+        max-width: 280px !important;
+        scroll-snap-align: start !important;
+    }
+    
+    /* МАСКИ */
+    .mask-btn {
+        padding: 6px 12px !important;
+        font-size: 11px !important;
+        margin: 3px !important;
+        border-radius: 8px !important;
+    }
+    
+    /* ПОДСКАЗКА СВАЙПА */
+    .swipe-hint {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        margin: 15px auto !important;
+        font-size: 12px !important;
+        color: #aaa !important;
+        background: rgba(255, 215, 0, 0.05) !important;
+        padding: 8px 15px !important;
+        border-radius: 20px !important;
+        max-width: 200px !important;
+    }
+    
+    .swipe-hint i {
+        margin: 0 5px !important;
+        color: var(--primary-color) !important;
+    }
+    
+    /* ИНДИКАТОРЫ СЛАЙДЕРА */
+    .slider-indicators {
+        margin-top: 20px !important;
+        gap: 8px !important;
+    }
+    
+    .slider-indicator {
+        width: 10px !important;
+        height: 10px !important;
+    }
+    
+    /* КНОПКИ НАВИГАЦИИ СЛАЙДЕРА */
+    .slider-nav-btn {
+        display: none !important; /* Скрываем на мобильных, используем свайп */
+    }
+    
+    /* HEADER АДАПТАЦИЯ */
+    .header {
+        padding: 12px 0 !important;
+    }
+    
+    .logo-icon {
+        width: 40px !important;
+        height: 40px !important;
+        font-size: 30px !important;
+    }
+    
+    .logo {
+        font-size: 20px !important;
+    }
+    
+    .logo-subtitle {
+        font-size: 9px !important;
+        letter-spacing: 1.5px !important;
+    }
+    
+    /* HERO АДАПТАЦИЯ */
+    .hero {
+        padding: 25px 0 20px !important;
+    }
+    
+    .hero-title {
+        font-size: 32px !important;
+        margin-bottom: 15px !important;
+    }
+    
+    .hero-subtitle {
+        font-size: 15px !important;
+        padding: 15px !important;
+        margin-bottom: 20px !important;
+    }
+    
+    /* ПОИСК */
+    .search-section {
+        margin-bottom: 30px !important;
+    }
+    
+    .search-box {
+        border-radius: 12px !important;
+        border: 1px solid rgba(255, 215, 0, 0.2) !important;
+    }
+    
+    .search-input {
+        padding: 14px 16px !important;
+        font-size: 16px !important;
+    }
+    
+    .search-btn {
+        padding: 14px !important;
+        font-size: 14px !important;
+        min-width: 100% !important;
+    }
+    
+    /* СЕКЦИИ */
+    .section-title {
+        font-size: 28px !important;
+        margin-bottom: 20px !important;
+        padding-bottom: 15px !important;
+    }
+    
+    .numbers-section,
+    .tariffs-section,
+    .features-section,
+    .operators-section {
+        padding: 30px 0 !important;
+    }
+    
+    /* ПРЕИМУЩЕСТВА */
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 15px !important;
+    }
+    
+    .feature-item {
+        padding: 0 !important;
+    }
+    
+    .feature-icon-box {
+        width: 60px !important;
+        height: 60px !important;
+        margin-bottom: 10px !important;
+    }
+    
+    .feature-icon-box .material-icons {
+        font-size: 40px !important;
+    }
+    
+    .feature-title {
+        font-size: 12px !important;
+        margin-bottom: 5px !important;
+    }
+    
+    .feature-desc {
+        font-size: 11px !important;
+        max-width: 120px !important;
+    }
+    
+    /* ОПЕРАТОРЫ */
+    .operators-grid {
+        gap: 10px !important;
+    }
+    
+    .operator-item {
+        min-width: 100px !important;
+        padding: 10px !important;
+        height: 50px !important;
+    }
+    
+    .operator-logo-img {
+        height: 20px !important;
+    }
+    
+    /* ТЕГИ */
+    .tags {
+        margin-top: 25px !important;
+        gap: 8px !important;
+    }
+    
+    .tag {
+        padding: 10px 15px !important;
+        font-size: 11px !important;
+        border-radius: 8px !important;
+    }
+    
+    /* КНОПКИ */
+    .view-all-btn,
+    .pick-tariff-btn {
+        padding: 14px 25px !important;
+        font-size: 14px !important;
+        border-radius: 10px !important;
+    }
+    
+    /* FOOTER */
+    .footer {
+        padding: 30px 0 20px !important;
+    }
+    
+    .phone-link,
+    .email-link {
+        font-size: 14px !important;
+        padding: 10px 15px !important;
+    }
+    
+    .social-link {
+        width: 45px !important;
+        height: 45px !important;
+        font-size: 18px !important;
+    }
+    
+    .callback-btn {
+        padding: 12px 25px !important;
+        font-size: 14px !important;
+    }
 }
 
+@media (max-width: 480px) {
+    /* ЕЩЕ МЕНЬШЕ КАРТОЧКИ НОМЕРОВ */
+    .number-card.mobile {
+        padding: 12px 10px !important;
+        padding-top: 45px !important;
+    }
+    
+    .number-card.mobile .phone-number {
+        font-size: 15px !important;
+        padding: 8px !important;
+        min-height: 45px !important;
+    }
+    
+    .number-card.mobile .number-price {
+        font-size: 12px !important;
+        top: 12px !important;
+        right: 10px !important;
+    }
+    
+    .number-card.mobile .select-number-btn {
+        padding: 7px 10px !important;
+        font-size: 10px !important;
+    }
+    
+    .number-card.mobile .number-badge {
+        top: 6px !important;
+        right: 10px !important;
+        font-size: 8px !important;
+        padding: 2px 5px !important;
+    }
+    
+    /* ТАРИФЫ */
+    .tariff-card.mobile {
+        width: 82vw !important;
+        min-width: 240px !important;
+        max-width: 260px !important;
+        padding: 18px 12px !important;
+    }
+    
+    .tariff-price-badge.mobile {
+        font-size: 15px !important;
+        padding: 4px 8px !important;
+    }
+    
+    .operator-name.mobile {
+        font-size: 15px !important;
+    }
+    
+    .tariff-info.mobile {
+        font-size: 12px !important;
+    }
+    
+    .connect-tariff-btn.mobile {
+        padding: 9px 12px !important;
+        font-size: 12px !important;
+    }
+    
+    /* HERO */
+    .hero-title {
+        font-size: 26px !important;
+    }
+    
+    .hero-subtitle {
+        font-size: 13px !important;
+        padding: 10px !important;
+    }
+    
+    /* ПОИСК */
+    .search-input {
+        font-size: 15px !important;
+        padding: 12px !important;
+    }
+    
+    .search-btn {
+        padding: 12px !important;
+        font-size: 13px !important;
+    }
+    
+    /* СЕКЦИИ */
+    .section-title {
+        font-size: 24px !important;
+    }
+    
+    .mask-group-title {
+        font-size: 14px !important;
+    }
+    
+    /* ПРЕИМУЩЕСТВА */
+    .feature-icon-box {
+        width: 50px !important;
+        height: 50px !important;
+    }
+    
+    .feature-icon-box .material-icons {
+        font-size: 35px !important;
+    }
+    
+    .feature-title {
+        font-size: 11px !important;
+    }
+    
+    .feature-desc {
+        font-size: 10px !important;
+        max-width: 100px !important;
+    }
+    
+    /* ОПЕРАТОРЫ */
+    .operator-item {
+        min-width: 90px !important;
+        padding: 8px !important;
+        height: 45px !important;
+    }
+    
+    .operator-logo-img {
+        height: 18px !important;
+    }
+    
+    /* ЛОГО */
+    .logo-icon {
+        width: 35px !important;
+        height: 35px !important;
+        font-size: 25px !important;
+    }
+    
+    .logo {
+        font-size: 18px !important;
+    }
+    
+    .logo-subtitle {
+        font-size: 8px !important;
+    }
+}
+
+/* ПРЕДУПРЕЖДЕНИЕ ДЛЯ ОЧЕНЬ МАЛЕНЬКИХ ЭКРАНОВ */
+@media (max-width: 360px) {
+    .number-card.mobile .phone-number {
+        font-size: 14px !important;
+    }
+    
+    .tariff-card.mobile {
+        min-width: 220px !important;
+        max-width: 240px !important;
+    }
+    
+    .hero-title {
+        font-size: 22px !important;
+    }
+    
+    .hero-subtitle {
+        font-size: 12px !important;
+    }
+}
+
+/* ИСПРАВЛЕНИЕ ПРОБЛЕМ СО СВАЙПОМ НА IOS */
+@supports (-webkit-touch-callout: none) {
+    .tariffs-container {
+        -webkit-overflow-scrolling: touch !important;
+        overflow-x: scroll !important;
+    }
+}
+
+/* ПРЕДОТВРАЩЕНИЕ ВЫДЕЛЕНИЯ ТЕКСТА ПРИ СВАЙПЕ */
+.tariffs-slider {
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+}
+/* Мобильная адаптация для тарифов */
+@media (max-width: 768px) {
+    .tariff-card.mobile {
+        padding: 15px;
+        min-height: 180px;
+        margin: 0 10px;
+    }
+    
+    .tariff-price-badge.mobile {
+        font-size: 18px;
+        padding: 6px 12px;
+    }
+    
+    .operator-name.mobile {
+        font-size: 14px;
+        margin: 8px 0;
+    }
+    
+    .tariff-info.mobile {
+        font-size: 12px;
+        margin-bottom: 12px;
+    }
+    
+    .connect-tariff-btn.mobile {
+        padding: 8px 16px;
+        font-size: 12px;
+    }
+    
+    .tariffs-container {
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .tariffs-slider {
+        display: flex;
+        flex-wrap: nowrap;
+        scroll-snap-align: start;
+    }
+    
+    .tariff-card {
+        scroll-snap-align: center;
+    }
+    
+    /* Мобильная адаптация для номеров */
+    .number-card.mobile {
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+    
+    .phone-number {
+        font-size: 16px;
+    }
+    
+    .number-price {
+        font-size: 14px;
+    }
+    
+    .select-number-btn.mobile {
+        padding: 8px 16px;
+        font-size: 12px;
+    }
+    
+    /* Мобильная адаптация для масок */
+    .mask-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+        margin: 3px;
+    }
+    
+    /* Мобильная адаптация для бейджей */
+    .badge-small {
+        font-size: 9px;
+        padding: 3px 6px;
+    }
+    
+    .swipe-hint {
+        display: flex !important;
+        justify-content: center;
+        align-items: center;
+        margin-top: 15px;
+        font-size: 12px;
+        color: #aaa;
+    }
+}
+
+@media (max-width: 480px) {
+    .tariff-card.mobile {
+        min-height: 160px;
+        padding: 12px;
+    }
+    
+    .tariff-price-badge.mobile {
+        font-size: 16px;
+    }
+    
+    .number-card.mobile {
+        padding: 10px;
+    }
+    
+    .phone-number {
+        font-size: 14px;
+    }
+}
 /* ==================== MEDIA QUERIES ==================== */
 @media (max-width: 1400px) {
     .container {
@@ -2015,12 +2656,13 @@ html {
     background: rgba(26, 21, 15, 0.95);
     border: 1px solid rgba(255, 215, 0, 0.15);
     border-radius: 12px;
-    padding: 20px;
-    padding-top: 45px;
+    padding: 24px 22px 20px;
+    padding-top: 60px;
     display: flex;
     flex-direction: column;
     gap: 15px;
     transition: all 0.3s ease;
+    overflow: hidden;
 }
 
 .number-card:hover {
@@ -2038,8 +2680,8 @@ html {
 
 .number-price {
     position: absolute;
-    top: 12px;
-    right: 15px;
+    top: 26px;
+    right: 18px;
     font-size: 16px;
     font-weight: 700;
     color: var(--primary-color);
@@ -2060,7 +2702,7 @@ html {
 /* ==================== ЗНАЧКИ (BADGES) ==================== */
 .number-badge {
     position: absolute;
-    top: -8px;
+    top: 5px;
     right: 15px;
     padding: 4px 12px;
     border-radius: 4px;
@@ -2068,11 +2710,13 @@ html {
     font-weight: 700;
     letter-spacing: 1px;
     text-transform: uppercase;
+    z-index: 10;
 }
 
 .badge-vip {
     background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
     color: #1a1a2e;
+    
 }
 
 .badge-hit {
@@ -2272,9 +2916,8 @@ html {
     
     /* Карточка номера - мобильная версия */
     .number-card {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 18px 20px;
+        padding: 26px 20px;
+        padding-top: 80px;
         gap: 12px;
     }
     
@@ -2285,10 +2928,8 @@ html {
     }
     
     .number-price {
-        font-size: 16px;
-        width: 100%;
-        text-align: center;
-        min-width: auto;
+        top: 30px;
+        right: 18px;
     }
     
     .number-card .card-footer {
@@ -2301,7 +2942,7 @@ html {
     }
     
     .number-badge {
-        top: -6px;
+        top: 10px;
         right: 10px;
         font-size: 10px;
         padding: 3px 10px;
