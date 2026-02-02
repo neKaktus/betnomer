@@ -25,6 +25,7 @@ const TELEGRAM_USERNAME = "ne_kaktus";
 function loadDataFromStorage() {
     const savedMasks = localStorage.getItem('bestnomer_masks');
     const savedNumbers = localStorage.getItem('bestnomer_numbers');
+    const savedTariffs = localStorage.getItem('bestnomer_tariffs');
     
     if (savedMasks) {
         try {
@@ -45,6 +46,16 @@ function loadDataFromStorage() {
             }
         } catch(e) { console.log('Error loading numbers from storage'); }
     }
+    
+    if (savedTariffs) {
+        try {
+            const parsedTariffs = JSON.parse(savedTariffs);
+            if (Array.isArray(parsedTariffs) && parsedTariffs.length > 0) {
+                tariffsData.length = 0;
+                parsedTariffs.forEach(t => tariffsData.push(t));
+            }
+        } catch(e) { console.log('Error loading tariffs from storage'); }
+    }
 }
 
 function sendToTelegram(message) {
@@ -55,6 +66,10 @@ function sendToTelegram(message) {
 
 document.addEventListener('DOMContentLoaded', function() {
     createStars();
+    
+    // Проверка мобильного устройства при загрузке
+    checkMobile();
+    
     // Инициализация мобильного меню
     if (mobileMenuBtn && mobileMenu) {
         mobileMenuBtn.addEventListener('click', function(e) {
@@ -104,25 +119,23 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    checkMobile();
     updateSwipeHint();
     
     // Загружаем данные из localStorage (если были изменены через админ-панель)
     loadDataFromStorage();
     
-    renderMasks();
-    renderNumbers();
+    // Рендерим все компоненты с учетом мобильной версии
+    renderAllMobileOptimized();
     
     // Скрываем кнопку "смотреть все" так как номера группируются по маскам
     if (viewAllBtn) {
         viewAllBtn.style.display = 'none';
     }
 
-    renderTariffs();
-    updateTariffsSlider();
-    updateNavButtons();
-    
-    initOptimizedSwipe();
+    // Инициализируем свайп для мобильных
+    if (isMobile) {
+        initMobileSwipe();
+    }
     
     if (prevTariffBtn) {
         prevTariffBtn.addEventListener('click', function() {
@@ -136,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (nextTariffBtn) {
         nextTariffBtn.addEventListener('click', function() {
-            const maxIndex = tariffsData.length - tariffsPerView;
+            const maxIndex = Math.max(0, tariffsData.length - tariffsPerView);
             if (currentTariffIndex < maxIndex) {
                 currentTariffIndex++;
                 updateTariffsSlider();
@@ -145,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Обновленный ввод номера (как во втором файле)
+    // Форматирование ввода номера телефона
     if (phoneInput) {
         phoneInput.addEventListener('input', function() {
             let value = this.value.replace(/\D/g, '');
@@ -171,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Обновленный поиск
+    // Поиск номера
     if (searchBtn && phoneInput) {
         searchBtn.addEventListener('click', function() {
             const phoneNumber = phoneInput.value.trim();
@@ -206,10 +219,21 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Обработчик изменения размера окна
     window.addEventListener('resize', function() {
+        const wasMobile = isMobile;
         checkMobile();
         updateSwipeHint();
         updateTariffsPerView();
+        
+        // Если статус мобильности изменился, перерисовываем
+        if (wasMobile !== isMobile) {
+            renderAllMobileOptimized();
+            if (isMobile) {
+                initMobileSwipe();
+            }
+        }
+        
         updateTariffsSlider();
         updateNavButtons();
     });
@@ -219,8 +243,13 @@ function createStars() {
     const spaceBg = document.querySelector('.space-bg');
     if (!spaceBg) return;
     
-    // Создаем 100 маленьких звезд
-    for (let i = 0; i < 100; i++) {
+    // Для мобильных создаем меньше звезд для производительности
+    const starCount = isMobile ? 50 : 100;
+    const mediumCount = isMobile ? 25 : 50;
+    const largeCount = isMobile ? 10 : 20;
+    
+    // Создаем маленькие звезды
+    for (let i = 0; i < starCount; i++) {
         const star = document.createElement('div');
         star.className = 'star small';
         star.style.left = Math.random() * 100 + '%';
@@ -229,8 +258,8 @@ function createStars() {
         spaceBg.appendChild(star);
     }
     
-    // Создаем 50 средних звезд
-    for (let i = 0; i < 50; i++) {
+    // Создаем средние звезды
+    for (let i = 0; i < mediumCount; i++) {
         const star = document.createElement('div');
         star.className = 'star medium';
         star.style.left = Math.random() * 100 + '%';
@@ -239,8 +268,8 @@ function createStars() {
         spaceBg.appendChild(star);
     }
     
-    // Создаем 20 больших звезд
-    for (let i = 0; i < 20; i++) {
+    // Создаем большие звезды
+    for (let i = 0; i < largeCount; i++) {
         const star = document.createElement('div');
         star.className = 'star large';
         star.style.left = Math.random() * 100 + '%';
@@ -249,144 +278,96 @@ function createStars() {
         spaceBg.appendChild(star);
     }
     
-    // Создаем 10 золотых частиц
-    for (let i = 0; i < 10; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'gold-particle';
-        const size = Math.random() * 5 + 2;
-        particle.style.width = size + 'px';
-        particle.style.height = size + 'px';
-        particle.style.left = Math.random() * 100 + '%';
-        particle.style.animationDelay = Math.random() * 15 + 's';
-        particle.style.animationDuration = (Math.random() * 10 + 20) + 's';
-        spaceBg.appendChild(particle);
+    // Создаем золотые частицы (только для десктопа)
+    if (!isMobile) {
+        for (let i = 0; i < 10; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'gold-particle';
+            const size = Math.random() * 5 + 2;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (Math.random() * 10 + 20) + 's';
+            spaceBg.appendChild(particle);
+        }
     }
 }
-function initOptimizedSwipe() {
+
+// Упрощенный свайп для мобильных
+function initMobileSwipe() {
     if (!tariffsSlider || !tariffsContainer) return;
     
     let startX = 0;
-    let startY = 0;
-    let startScrollLeft = 0;
-    let startScrollTop = 0;
-    let isHorizontalMove = false;
-    let scrollTimeout = null;
+    let startTime = 0;
     
-
     const handleTouchStart = (e) => {
-        if (!isMobile) return;
-        
-        isScrolling = true;
         startX = e.touches[0].clientX;
-        startY = e.touches[0].clientY;
-        startScrollLeft = tariffsContainer.scrollLeft;
-        startScrollTop = window.scrollY || document.documentElement.scrollTop;
-        isHorizontalMove = false;
-        
-
-        document.body.style.overflow = 'hidden';
-        tariffsContainer.style.scrollSnapType = 'none';
+        startTime = Date.now();
     };
     
-
-    const handleTouchMove = (e) => {
-        if (!isMobile || !isScrolling) return;
-        
-        e.preventDefault();
-        
-        const currentX = e.touches[0].clientX;
-        const currentY = e.touches[0].clientY;
-        const deltaX = currentX - startX;
-        const deltaY = currentY - startY;
-        
-       
-        if (!isHorizontalMove) {
-            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 5) {
-                isHorizontalMove = true;
-            } else if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 5) {
-                isHorizontalMove = false;
-                return; 
-            }
-        }
-        
- 
-        if (isHorizontalMove) {
-            e.stopPropagation();
-            const scrollAmount = startScrollLeft - deltaX;
-            tariffsContainer.scrollLeft = scrollAmount;
-        }
-    };
-    
-
     const handleTouchEnd = (e) => {
-        if (!isMobile) return;
+        if (!startX) return;
         
-        isScrolling = false;
-        document.body.style.overflow = '';
-        tariffsContainer.style.scrollSnapType = 'x mandatory';
+        const endX = e.changedTouches[0].clientX;
+        const deltaX = endX - startX;
+        const deltaTime = Date.now() - startTime;
+        const minSwipeDistance = 50;
+        const maxSwipeTime = 500;
         
-
-        if (isHorizontalMove) {
-            const containerRect = tariffsContainer.getBoundingClientRect();
-            const cards = tariffsSlider.children;
-            let nearestCard = null;
-            let minDistance = Infinity;
-            
-            for (let card of cards) {
-                const cardRect = card.getBoundingClientRect();
-                const distance = Math.abs(cardRect.left - containerRect.left);
-                
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    nearestCard = card;
+        // Определяем направление свайпа
+        if (Math.abs(deltaX) > minSwipeDistance && deltaTime < maxSwipeTime) {
+            if (deltaX > 0) {
+                // Свайп вправо - предыдущий тариф
+                if (currentTariffIndex > 0) {
+                    currentTariffIndex--;
+                } else {
+                    // Циклический переход к последнему
+                    currentTariffIndex = Math.max(0, tariffsData.length - 1);
+                }
+            } else {
+                // Свайп влево - следующий тариф
+                const maxIndex = Math.max(0, tariffsData.length - 1);
+                if (currentTariffIndex < maxIndex) {
+                    currentTariffIndex++;
+                } else {
+                    // Циклический переход к первому
+                    currentTariffIndex = 0;
                 }
             }
             
-            if (nearestCard) {
-                const cardIndex = parseInt(nearestCard.dataset.index);
-                currentTariffIndex = cardIndex;
-           
-                tariffsContainer.scrollTo({
-                    left: nearestCard.offsetLeft - (containerRect.width - nearestCard.offsetWidth) / 2,
-                    behavior: 'smooth'
-                });
-                
-                updateNavButtons();
-                updateIndicators();
-            }
+            updateTariffsSlider();
+            updateNavButtons();
         }
-
-        if (scrollTimeout) clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(() => {
-            isHorizontalMove = false;
-        }, 300);
+        
+        startX = 0;
     };
     
-
-    tariffsContainer.addEventListener('touchstart', handleTouchStart, { passive: false });
-    tariffsContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
+    // Добавляем обработчики для мобильного свайпа
+    tariffsContainer.addEventListener('touchstart', handleTouchStart, { passive: true });
     tariffsContainer.addEventListener('touchend', handleTouchEnd, { passive: true });
     
-
-    tariffsContainer.addEventListener('touchstart', (e) => {
-        if (e.touches.length > 1) {
+    // Отключаем горизонтальный скролл страницы при касании слайдера
+    tariffsContainer.addEventListener('touchmove', function(e) {
+        if (Math.abs(e.touches[0].clientX - startX) > 10) {
             e.preventDefault();
         }
     }, { passive: false });
-    
-
-    tariffsContainer.addEventListener('contextmenu', (e) => {
-        if (isMobile) e.preventDefault();
-    });
 }
 
-
 function checkMobile() {
-    isMobile = window.innerWidth <= 768;
-    if (isMobile) {
+    const width = window.innerWidth;
+    isMobile = width <= 768;
+    
+    // Обновляем количество отображаемых тарифов
+    if (width < 576) {
         tariffsPerView = 1;
-    } else if (window.innerWidth < 992) {
+    } else if (width < 768) {
+        tariffsPerView = 1;
+    } else if (width < 992) {
         tariffsPerView = 2;
+    } else if (width < 1200) {
+        tariffsPerView = 3;
     } else {
         tariffsPerView = 3;
     }
@@ -395,12 +376,19 @@ function checkMobile() {
 function updateSwipeHint() {
     const swipeHint = document.querySelector('.swipe-hint');
     if (swipeHint) {
-        swipeHint.style.display = isMobile ? 'block' : 'none';
+        swipeHint.style.display = isMobile ? 'flex' : 'none';
     }
 }
 
-function renderMasks() {
-    // Рендерим маски в оба контейнера (hero и numbers секция)
+function renderAllMobileOptimized() {
+    renderMasksMobile();
+    renderNumbersMobile();
+    renderTariffsMobile();
+    updateTariffsSlider();
+    updateNavButtons();
+}
+
+function renderMasksMobile() {
     const containers = [
         document.getElementById('masksContainer'),
         document.getElementById('masksContainerNumbers')
@@ -410,11 +398,19 @@ function renderMasks() {
         if (!container) return;
         
         container.innerHTML = '';
+        
+        // Для мобильных уменьшаем размер кнопок масок
         masksData.forEach(mask => {
             const maskBtn = document.createElement('button');
             maskBtn.className = 'mask-btn';
             maskBtn.dataset.mask = mask.id;
-            maskBtn.innerHTML = `<span class="mask-name">${mask.name}</span>`;
+            
+            // Для мобильных делаем текст компактнее
+            const maskName = isMobile ? 
+                mask.name.replace(/[-\s]/g, '') : // Убираем дефисы и пробелы на мобильных
+                mask.name;
+                
+            maskBtn.innerHTML = `<span class="mask-name">${maskName}</span>`;
             maskBtn.addEventListener('click', () => {
                 scrollToMask(mask.id);
             });
@@ -426,7 +422,15 @@ function renderMasks() {
 function scrollToMask(maskId) {
     const maskSection = document.getElementById(`mask-${maskId}`);
     if (maskSection) {
-        maskSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Для мобильных добавляем отступ сверху
+        const offset = isMobile ? 80 : 0;
+        const elementPosition = maskSection.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - offset;
+        
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+        });
     }
 }
 
@@ -434,15 +438,17 @@ function getBadgeHTML(badge) {
     if (!badge) return '';
     const badgeColors = {
         'vip': 'badge-vip',
+        'hot': 'badge-hot',
         'hit': 'badge-hit',
         'sale': 'badge-sale',
         'new': 'badge-new'
     };
     const badgeClass = badgeColors[badge] || '';
-    return `<span class="number-badge ${badgeClass}">${badge.toUpperCase()}</span>`;
+    // Для мобильных уменьшаем размер бейджей
+    const badgeSizeClass = isMobile ? 'badge-small' : '';
+    return `<span class="number-badge ${badgeClass} ${badgeSizeClass}">${badge.toUpperCase()}</span>`;
 }
 
-// Приоритет плашек для сортировки (чем меньше число - тем выше приоритет)
 function getBadgePriority(badge) {
     const priorities = {
         'vip': 1,
@@ -453,15 +459,17 @@ function getBadgePriority(badge) {
     return priorities[badge] || 99;
 }
 
-// Хранит количество показанных номеров для каждой маски
 const shownNumbersCount = {};
-const NUMBERS_PER_LOAD = 4;
+const NUMBERS_PER_LOAD_MOBILE = 2;
+const NUMBERS_PER_LOAD_DESKTOP = 4;
 
-function renderNumbers() {
+function renderNumbersMobile() {
     if (!numbersGrid) return;
     numbersGrid.innerHTML = '';
     
-    // Группируем номера по маскам
+    // Для мобильных используем другую структуру
+    const numbersPerLoad = isMobile ? NUMBERS_PER_LOAD_MOBILE : NUMBERS_PER_LOAD_DESKTOP;
+    
     const numbersByMask = {};
     numbersData.forEach(number => {
         if (!numbersByMask[number.mask]) {
@@ -470,26 +478,23 @@ function renderNumbers() {
         numbersByMask[number.mask].push(number);
     });
     
-    // Отображаем номера сгруппированные по маскам
     masksData.forEach(mask => {
         let maskNumbers = numbersByMask[mask.id] || [];
         if (maskNumbers.length === 0) return;
         
-        // Инициализируем счетчик показанных номеров
         if (!shownNumbersCount[mask.id]) {
-            shownNumbersCount[mask.id] = NUMBERS_PER_LOAD;
+            shownNumbersCount[mask.id] = numbersPerLoad;
         }
         
-        // Сортируем: номера с плашками выше, потом по приоритету плашки
         maskNumbers.sort((a, b) => {
             return getBadgePriority(a.badge) - getBadgePriority(b.badge);
         });
         
-        // Заголовок группы
         const maskGroup = document.createElement('div');
         maskGroup.className = 'mask-group';
         maskGroup.id = `mask-${mask.id}`;
         
+        // Для мобильных уменьшаем заголовок
         const maskHeader = document.createElement('div');
         maskHeader.className = 'mask-group-header';
         maskHeader.innerHTML = `
@@ -498,23 +503,27 @@ function renderNumbers() {
         `;
         maskGroup.appendChild(maskHeader);
         
-        // Номера в группе - горизонтальные карточки в одну колонку
         const numbersInGroup = document.createElement('div');
-        numbersInGroup.className = 'numbers-in-group';
+        numbersInGroup.className = isMobile ? 'numbers-in-group mobile' : 'numbers-in-group';
         
-        // Показываем только нужное количество номеров
         const visibleNumbers = maskNumbers.slice(0, shownNumbersCount[mask.id]);
         
         visibleNumbers.forEach(number => {
             const card = document.createElement('div');
-            card.className = 'number-card';
+            card.className = isMobile ? 'number-card mobile' : 'number-card';
+            
+            // Для мобильных упрощаем карточку
+            const phoneNumber = isMobile ? 
+                number.number.replace(/\s/g, '') : // Убираем пробелы на мобильных
+                number.number;
+                
             card.innerHTML = `
                 ${getBadgeHTML(number.badge)}
-                <div class="phone-number">${number.number}</div>
+                <div class="phone-number">${phoneNumber}</div>
                 <div class="number-price">${number.price || ''}</div>
                 <div class="card-footer">
-                    <button class="select-number-btn" onclick="sendToTelegram('Номер: ${number.number}, Цена: ${number.price}')">
-                        Выбрать номер
+                    <button class="select-number-btn ${isMobile ? 'mobile' : ''}" onclick="sendToTelegram('Номер: ${number.number}, Цена: ${number.price}')">
+                        ${isMobile ? 'Выбрать' : 'Выбрать номер'}
                     </button>
                 </div>
             `;
@@ -523,15 +532,14 @@ function renderNumbers() {
         
         maskGroup.appendChild(numbersInGroup);
         
-        // Кнопка "Смотреть еще" если есть еще номера
         if (maskNumbers.length > shownNumbersCount[mask.id]) {
             const remaining = maskNumbers.length - shownNumbersCount[mask.id];
             const showMoreBtn = document.createElement('button');
             showMoreBtn.className = 'show-more-btn';
             showMoreBtn.innerHTML = `<span>Смотреть еще</span> <i class="fas fa-chevron-down"></i>`;
             showMoreBtn.onclick = () => {
-                shownNumbersCount[mask.id] += NUMBERS_PER_LOAD;
-                renderNumbers();
+                shownNumbersCount[mask.id] += numbersPerLoad;
+                renderNumbersMobile();
             };
             maskGroup.appendChild(showMoreBtn);
         }
@@ -540,47 +548,123 @@ function renderNumbers() {
     });
 }
 
-function renderTariffs() {
+function formatTariffInfo(data, minutes) {
+    let formattedData = data || '';
+    let formattedMinutes = minutes || '';
+    
+    if (formattedData && /\d/.test(formattedData) && !formattedData.includes('ГБ') && !formattedData.includes('GB')) {
+        formattedData = formattedData.trim() + ' ГБ';
+    }
+    
+    if (formattedMinutes && /\d/.test(formattedMinutes) && !formattedMinutes.includes('мин') && !formattedMinutes.includes('min')) {
+        formattedMinutes = formattedMinutes.trim() + ' мин';
+    }
+    
+    // Для мобильных сокращаем текст
+    if (isMobile) {
+        return `${formattedData} • ${formattedMinutes}`;
+    }
+    
+    return `${formattedData} · ${formattedMinutes}`;
+}
+
+function formatPrice(price) {
+    if (!price) return 'Цена не указана';
+    
+    let formattedPrice = price.trim();
+    
+    if (!formattedPrice.includes('₽') && !formattedPrice.includes('руб') && !formattedPrice.includes('р.')) {
+        formattedPrice = formattedPrice + ' ₽';
+    }
+    
+    return formattedPrice;
+}
+
+function renderTariffsMobile() {
     if (!tariffsSlider) return;
     tariffsSlider.innerHTML = '';
+    
+    if (tariffsData.length === 0) {
+        tariffsSlider.innerHTML = `
+            <div class="no-tariffs-message ${isMobile ? 'mobile' : ''}">
+                <i class="fas fa-tags"></i>
+                <p>${isMobile ? 'Тарифы скоро появятся' : 'Тарифы скоро появятся'}</p>
+                <p style="font-size: ${isMobile ? '11px' : '12px'}; margin-top: 10px; color: #aaa;">
+                    ${isMobile ? 'Добавьте тарифы в админке' : 'Добавьте тарифы через админ-панель'}
+                </p>
+            </div>
+        `;
+        return;
+    }
+    
     tariffsData.forEach((tariff, index) => {
         const card = document.createElement('div');
-        card.className = 'tariff-card';
+        card.className = isMobile ? 'tariff-card mobile' : 'tariff-card';
         card.dataset.index = index;
+        
+        // Для мобильных упрощаем карточку
+        const formattedPrice = formatPrice(tariff.price);
+        const formattedInfo = formatTariffInfo(tariff.data, tariff.minutes);
+        const operatorName = isMobile && tariff.operator && tariff.operator.length > 15 ? 
+            tariff.operator.substring(0, 15) + '...' : 
+            tariff.operator || 'Без оператора';
+        
         card.innerHTML = `
-            <div class="operator-name">${tariff.operator}</div>
-            <div class="tariff-info">${tariff.data} · ${tariff.minutes}</div>
-            <div class="tariff-price">${tariff.price}</div>
-            <button class="connect-tariff-btn" onclick="sendToTelegram('Тариф: ${tariff.operator} - ${tariff.data}, ${tariff.minutes}, ${tariff.price}')">
-                Подключить
+            ${getBadgeHTML(tariff.badge)}
+            <div class="tariff-price-badge ${isMobile ? 'mobile' : ''}">${formattedPrice}</div>
+            <div class="operator-name ${isMobile ? 'mobile' : ''}">${operatorName}</div>
+            <div class="tariff-info ${isMobile ? 'mobile' : ''}">${formattedInfo}</div>
+            <button class="connect-tariff-btn ${isMobile ? 'mobile' : ''}" onclick="sendToTelegram('Тариф: ${tariff.operator || 'Без оператора'} - ${tariff.data || ''}, ${tariff.minutes || ''}, ${tariff.price || ''}')">
+                ${isMobile ? 'Подключить' : 'Подключить'}
             </button>
         `;
         tariffsSlider.appendChild(card);
     });
+    
+    // Для мобильных обновляем стили карточек
+    if (isMobile && tariffsSlider.children.length > 0) {
+        const cards = tariffsSlider.children;
+        const containerWidth = tariffsContainer ? tariffsContainer.offsetWidth : 300;
+        const cardWidth = containerWidth - 40; // 20px margin с каждой стороны
+        
+        for (let card of cards) {
+            card.style.flex = `0 0 ${cardWidth}px`;
+            card.style.width = `${cardWidth}px`;
+            card.style.margin = '0 10px';
+        }
+        
+        // Устанавливаем начальную позицию для мобильных
+        tariffsSlider.style.transform = 'translateX(0)';
+        tariffsSlider.style.display = 'flex';
+        tariffsSlider.style.flexWrap = 'nowrap';
+        tariffsSlider.style.transition = 'transform 0.3s ease';
+    }
 }
 
 function updateTariffsSlider() {
     if (!tariffsSlider) return;
     
-    if (!isMobile) {
-        const cardWidthPercent = 100 / tariffsPerView;
-        const offset = -currentTariffIndex * cardWidthPercent;
-        tariffsSlider.style.transform = `translateX(${offset}%)`;
-        tariffsSlider.style.transition = 'transform 0.3s ease';
-    } else {
+    if (isMobile) {
         // Для мобильных - плавная прокрутка к центру карточки
         const container = document.querySelector('.tariffs-container');
         const currentCard = tariffsSlider.querySelector(`[data-index="${currentTariffIndex}"]`);
         
         if (container && currentCard) {
             const containerRect = container.getBoundingClientRect();
-            const targetScroll = currentCard.offsetLeft - (containerRect.width - currentCard.offsetWidth) / 2;
+            const cardRect = currentCard.getBoundingClientRect();
+            const targetScroll = currentCard.offsetLeft - (containerRect.width - cardRect.width) / 2;
             
             container.scrollTo({
                 left: targetScroll,
                 behavior: 'smooth'
             });
         }
+    } else {
+        // Для десктопа
+        const cardWidthPercent = 100 / tariffsPerView;
+        const offset = -currentTariffIndex * cardWidthPercent;
+        tariffsSlider.style.transform = `translateX(${offset}%)`;
+        tariffsSlider.style.transition = 'transform 0.3s ease';
     }
     
     updateIndicators();
@@ -598,7 +682,17 @@ function updateIndicators() {
 function updateNavButtons() {
     if (!prevTariffBtn || !nextTariffBtn) return;
     
-    const maxIndex = tariffsData.length - tariffsPerView;
+    const maxIndex = Math.max(0, tariffsData.length - tariffsPerView);
+    
+    // Для мобильных скрываем кнопки навигации
+    if (isMobile) {
+        prevTariffBtn.style.display = 'none';
+        nextTariffBtn.style.display = 'none';
+        return;
+    }
+    
+    prevTariffBtn.style.display = 'flex';
+    nextTariffBtn.style.display = 'flex';
     
     prevTariffBtn.disabled = currentTariffIndex <= 0;
     prevTariffBtn.style.opacity = prevTariffBtn.disabled ? '0.5' : '1';
@@ -611,20 +705,26 @@ function updateNavButtons() {
 
 function updateTariffsPerView() {
     const width = window.innerWidth;
-    if (width < 768) {
+    
+    if (width < 576) {
+        tariffsPerView = 1;
+    } else if (width < 768) {
         tariffsPerView = 1;
     } else if (width < 992) {
         tariffsPerView = 2;
+    } else if (width < 1200) {
+        tariffsPerView = 3;
     } else {
         tariffsPerView = 3;
     }
 
-    const maxIndex = tariffsData.length - tariffsPerView;
+    const maxIndex = Math.max(0, tariffsData.length - tariffsPerView);
     if (currentTariffIndex > maxIndex) {
         currentTariffIndex = Math.max(0, maxIndex);
     }
 }
 
+// Инициализация индикаторов слайдера
 document.addEventListener('DOMContentLoaded', function() {
     const indicators = document.querySelectorAll('.slider-indicator');
     indicators.forEach((indicator, index) => {
@@ -635,3 +735,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// Функция для принудительного обновления данных
+function refreshData() {
+    console.log('Обновление данных из LocalStorage...');
+    loadDataFromStorage();
+    renderAllMobileOptimized();
+}
+
+// Функция для перерисовки всех данных
+function renderAll() {
+    renderMasksMobile();
+    renderNumbersMobile();
+    renderTariffsMobile();
+    updateTariffsSlider();
+    updateNavButtons();
+}
+
+// Экспортируем функции для использования в консоли браузера
+window.refreshData = refreshData;
+window.renderAll = renderAll;
+window.checkMobile = checkMobile;
