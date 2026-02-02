@@ -55,6 +55,10 @@ function loadDataFromStorage() {
                 parsedTariffs.forEach(t => tariffsData.push(t));
             }
         } catch(e) { console.log('Error loading tariffs from storage'); }
+    } else {
+        // Если в localStorage нет тарифов, используем примеры из data.js
+        // Это гарантирует, что тарифы отображаются при первом посещении
+        console.log('Используем примеры тарифов из data.js');
     }
 }
 
@@ -434,8 +438,35 @@ function scrollToMask(maskId) {
     }
 }
 
-function getBadgeHTML(badge) {
+// Функция для получения HTML бейджа для тарифов (правый верхний угол над ценой)
+function getTariffBadgeHTML(badge) {
     if (!badge) return '';
+    
+    // Определяем цвета для разных типов бейджей
+    const badgeColors = {
+        'vip': 'tariff-badge-vip',
+        'hit': 'tariff-badge-hit',
+        'sale': 'tariff-badge-sale',
+        'new': 'tariff-badge-new'
+    };
+    
+    // Определяем текст для бейджей
+    const badgeTexts = {
+        'vip': 'VIP',
+        'hit': 'ХИТ',
+        'sale': 'СКИДКА',
+        'new': 'НОВИНКА'
+    };
+    
+    const badgeClass = badgeColors[badge] || 'tariff-badge-vip';
+    const badgeText = badgeTexts[badge] || badge.toUpperCase();
+    
+    return `<span class="tariff-category-badge ${badgeClass}">${badgeText}</span>`;
+}
+// Функция для получения HTML бейджа для номеров (левый верхний угол)
+function getNumberBadgeHTML(badge) {
+    if (!badge) return '';
+    
     const badgeColors = {
         'vip': 'badge-vip',
         'hot': 'badge-hot',
@@ -443,10 +474,20 @@ function getBadgeHTML(badge) {
         'sale': 'badge-sale',
         'new': 'badge-new'
     };
+    
+    const badgeTexts = {
+        'vip': 'VIP',
+        'hot': 'ГОРЯЧЕЕ',
+        'hit': 'ХИТ',
+        'sale': 'СКИДКА',
+        'new': 'НОВИНКА'
+    };
+    
     const badgeClass = badgeColors[badge] || '';
-    // Для мобильных уменьшаем размер бейджей
+    const badgeText = badgeTexts[badge] || badge.toUpperCase();
     const badgeSizeClass = isMobile ? 'badge-small' : '';
-    return `<span class="number-badge ${badgeClass} ${badgeSizeClass}">${badge.toUpperCase()}</span>`;
+    
+    return `<span class="number-badge ${badgeClass} ${badgeSizeClass}">${badgeText}</span>`;
 }
 
 function getBadgePriority(badge) {
@@ -518,7 +559,7 @@ function renderNumbersMobile() {
                 number.number;
                 
             card.innerHTML = `
-                ${getBadgeHTML(number.badge)}
+                ${getNumberBadgeHTML(number.badge)}
                 <div class="phone-number">${phoneNumber}</div>
                 <div class="number-price">${number.price || ''}</div>
                 <div class="card-footer">
@@ -584,7 +625,10 @@ function renderTariffsMobile() {
     if (!tariffsSlider) return;
     tariffsSlider.innerHTML = '';
     
-    if (tariffsData.length === 0) {
+    // Проверяем, есть ли тарифы в данных
+    const tariffsToShow = tariffsData && tariffsData.length > 0 ? tariffsData : [];
+    
+    if (tariffsToShow.length === 0) {
         tariffsSlider.innerHTML = `
             <div class="no-tariffs-message ${isMobile ? 'mobile' : ''}">
                 <i class="fas fa-tags"></i>
@@ -597,7 +641,7 @@ function renderTariffsMobile() {
         return;
     }
     
-    tariffsData.forEach((tariff, index) => {
+    tariffsToShow.forEach((tariff, index) => {
         const card = document.createElement('div');
         card.className = isMobile ? 'tariff-card mobile' : 'tariff-card';
         card.dataset.index = index;
@@ -609,9 +653,16 @@ function renderTariffsMobile() {
             tariff.operator.substring(0, 15) + '...' : 
             tariff.operator || 'Без оператора';
         
+        // Создаем контейнер для цены с бейджем справа
+        const priceWithBadge = `
+            <div class="tariff-price-container">
+                <div class="tariff-price-badge ${isMobile ? 'mobile' : ''}">${formattedPrice}</div>
+                ${getTariffBadgeHTML(tariff.badge)}
+            </div>
+        `;
+        
         card.innerHTML = `
-            ${getBadgeHTML(tariff.badge)}
-            <div class="tariff-price-badge ${isMobile ? 'mobile' : ''}">${formattedPrice}</div>
+            ${priceWithBadge}
             <div class="operator-name ${isMobile ? 'mobile' : ''}">${operatorName}</div>
             <div class="tariff-info ${isMobile ? 'mobile' : ''}">${formattedInfo}</div>
             <button class="connect-tariff-btn ${isMobile ? 'mobile' : ''}" onclick="sendToTelegram('Тариф: ${tariff.operator || 'Без оператора'} - ${tariff.data || ''}, ${tariff.minutes || ''}, ${tariff.price || ''}')">
