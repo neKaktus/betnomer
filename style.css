@@ -721,7 +721,6 @@ body {
     background: linear-gradient(145deg, rgba(26, 21, 15, 0.92), rgba(13, 11, 8, 0.92));
     border-radius: 25px;
     padding: 48px 45px 45px;
-    padding-top: 75px;
     border: 1px solid rgba(255, 255, 255, 0.08);
     transition: transform 0.3s ease;
     box-shadow: var(--shadow-soft);
@@ -731,16 +730,52 @@ body {
 }
 
 /* Плашка цены на карточке тарифа */
+/* Плашка цены на карточке тарифа - В ПРАВОМ ВЕРХНЕМ УГЛУ, КАК В НОМЕРАХ */
 .tariff-price-badge {
     position: absolute;
-    top: 31px;
-    right: 25px;
-    font-size: 15px;
+    top: 26px;
+    right: 18px;
+    font-size: 16px;
     font-weight: 700;
     color: var(--primary-color);
     background: rgba(255, 215, 0, 0.15);
-    padding: 6px 14px;
-    border-radius: 8px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    z-index: 10;
+}
+
+/* Бейдж категории для тарифа - В ЛЕВОМ ВЕРХНЕМ УГЛУ */
+.tariff-category-badge {
+    position: absolute;
+    top: 10px;
+    left: 18px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 4px;
+    z-index: 10;
+}
+
+.tariff-badge-vip {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    color: #1a1a2e;
+}
+
+.tariff-badge-hit {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: white;
+}
+
+.tariff-badge-sale {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    color: white;
+}
+
+.tariff-badge-new {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: white;
 }
 
 /* Плашка badge на карточке тарифа */
@@ -3026,4 +3061,5 @@ html {
         position: relative;
         right: 0;
     }
+    
 }
