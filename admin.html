@@ -85,7 +85,6 @@
             display: flex;
             gap: 10px;
             margin-bottom: 30px;
-            flex-wrap: wrap;
         }
 
         .tab-btn {
@@ -147,8 +146,7 @@
         }
 
         .form-group input,
-        .form-group select,
-        .form-group textarea {
+        .form-group select {
             width: 100%;
             padding: 12px 16px;
             background: rgba(13, 11, 8, 0.95);
@@ -160,8 +158,7 @@
         }
 
         .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
+        .form-group select:focus {
             outline: none;
             border-color: #FFD700;
             box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
@@ -170,12 +167,6 @@
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .form-row-3 {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
             gap: 20px;
         }
 
@@ -254,7 +245,6 @@
             border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
-            display: inline-block;
         }
 
         .badge-mask {
@@ -265,11 +255,6 @@
         .badge-vip {
             background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
             color: #1a1a2e;
-        }
-
-        .badge-hot {
-            background: linear-gradient(135deg, #FF4500 0%, #FF6347 100%);
-            color: white;
         }
 
         .badge-hit {
@@ -349,7 +334,7 @@
             flex-wrap: wrap;
         }
 
-        /* Модальные окна */
+        /* Модальное окно */
         .modal {
             position: fixed;
             top: 0;
@@ -357,7 +342,7 @@
             right: 0;
             bottom: 0;
             background: rgba(0, 0, 0, 0.8);
-            display: none;
+            display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
@@ -368,7 +353,7 @@
             border: 1px solid rgba(255, 215, 0, 0.3);
             border-radius: 16px;
             padding: 30px;
-            max-width: 600px;
+            max-width: 500px;
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
@@ -376,61 +361,6 @@
 
         .modal-content .card-title {
             margin-bottom: 25px;
-        }
-
-        .file-upload-area {
-            border: 2px dashed rgba(255, 215, 0, 0.3);
-            border-radius: 12px;
-            padding: 40px 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-bottom: 20px;
-        }
-
-        .file-upload-area:hover {
-            border-color: #FFD700;
-            background: rgba(255, 215, 0, 0.05);
-        }
-
-        .file-upload-area i {
-            font-size: 48px;
-            color: #FFD700;
-            margin-bottom: 15px;
-        }
-
-        .file-upload-area p {
-            color: #aaa;
-            margin-bottom: 10px;
-        }
-
-        .auto-save-status {
-            margin-top: 10px;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            display: none;
-        }
-
-        .auto-save-status.saving {
-            display: block;
-            background: rgba(255, 215, 0, 0.1);
-            color: #FFD700;
-            border: 1px solid rgba(255, 215, 0, 0.3);
-        }
-
-        .auto-save-status.success {
-            display: block;
-            background: rgba(46, 204, 113, 0.1);
-            color: #2ecc71;
-            border: 1px solid #2ecc71;
-        }
-
-        .auto-save-status.error {
-            display: block;
-            background: rgba(231, 76, 60, 0.1);
-            color: #e74c3c;
-            border: 1px solid #e74c3c;
         }
 
         @media (max-width: 992px) {
@@ -452,8 +382,7 @@
         }
 
         @media (max-width: 768px) {
-            .form-row,
-            .form-row-3 {
+            .form-row {
                 grid-template-columns: 1fr;
             }
             
@@ -474,7 +403,7 @@
             
             .tab-btn {
                 flex: 1;
-                min-width: 120px;
+                min-width: 100px;
                 text-align: center;
                 padding: 12px 15px;
                 font-size: 12px;
@@ -535,7 +464,7 @@
             }
             
             .tab-btn {
-                min-width: 100px;
+                min-width: 80px;
                 padding: 10px 12px;
                 font-size: 11px;
             }
@@ -577,11 +506,11 @@
             <button class="tab-btn active" data-tab="numbers">
                 <i class="fas fa-phone"></i> Номера
             </button>
-            <button class="tab-btn" data-tab="tariffs">
-                <i class="fas fa-tags"></i> Тарифы
-            </button>
             <button class="tab-btn" data-tab="masks">
                 <i class="fas fa-layer-group"></i> Маски
+            </button>
+            <button class="tab-btn" data-tab="tariffs">
+                <i class="fas fa-sim-card"></i> Тарифы
             </button>
             <button class="tab-btn" data-tab="export">
                 <i class="fas fa-download"></i> Экспорт/Импорт
@@ -589,7 +518,6 @@
         </div>
 
         <div id="alert" class="alert"></div>
-        <div id="autoSaveStatus" class="auto-save-status"></div>
 
         <!-- Вкладка номеров -->
         <div id="numbers" class="tab-content active">
@@ -653,26 +581,26 @@
                 </div>
             </div>
             
-            <!-- Модальное окно редактирования номера -->
-            <div id="editNumberModal" class="modal">
+            <!-- Модальное окно редактирования -->
+            <div id="editModal" class="modal" style="display: none;">
                 <div class="modal-content">
                     <h3 class="card-title"><i class="fas fa-edit"></i> Редактирование номера</h3>
-                    <input type="hidden" id="editNumberIndex">
+                    <input type="hidden" id="editIndex">
                     <div class="form-group">
                         <label>Номер телефона</label>
-                        <input type="text" id="editNumberPhone">
+                        <input type="text" id="editPhone">
                     </div>
                     <div class="form-group">
                         <label>Цена</label>
-                        <input type="text" id="editNumberPrice">
+                        <input type="text" id="editPrice">
                     </div>
                     <div class="form-group">
                         <label>Маска</label>
-                        <select id="editNumberMask"></select>
+                        <select id="editMask"></select>
                     </div>
                     <div class="form-group">
                         <label>Значок</label>
-                        <select id="editNumberBadge">
+                        <select id="editBadge">
                             <option value="">Без значка</option>
                             <option value="vip">VIP</option>
                             <option value="hit">HIT</option>
@@ -681,133 +609,10 @@
                         </select>
                     </div>
                     <div style="display: flex; gap: 10px;">
-                        <button class="btn btn-primary" onclick="saveNumberEdit()">
+                        <button class="btn btn-primary" onclick="saveEdit()">
                             <i class="fas fa-save"></i> Сохранить
                         </button>
-                        <button class="btn btn-secondary" onclick="closeNumberEditModal()">
-                            <i class="fas fa-times"></i> Отмена
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Вкладка тарифов -->
-        <div id="tariffs" class="tab-content">
-            <div class="card">
-                <h3 class="card-title"><i class="fas fa-plus"></i> Добавить тариф</h3>
-                <form id="addTariffForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>1. Название оператора</label>
-                            <input type="text" id="tariffOperator" placeholder="МТС, Билайн, Мегафон" required>
-                        </div>
-                        <div class="form-group">
-                            <label>2. Цена</label>
-                            <input type="text" id="tariffPrice" placeholder="500 ₽/месяц" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>3. Интернет трафик</label>
-                            <input type="text" id="tariffData" placeholder="30 ГБ" required>
-                        </div>
-                        <div class="form-group">
-                            <label>4. Минуты</label>
-                            <input type="text" id="tariffMinutes" placeholder="1000 минут" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>5. Значок (badge)</label>
-                            <select id="tariffBadge">
-                                <option value="">Без значка</option>
-                                <option value="vip">VIP</option>
-                                <option value="hot">HOT</option>
-                                <option value="hit">HIT</option>
-                                <option value="sale">SALE</option>
-                                <option value="new">NEW</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>6. Описание (опционально)</label>
-                            <input type="text" id="tariffDescription" placeholder="Дополнительные опции">
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Добавить тариф
-                    </button>
-                </form>
-            </div>
-
-            <div class="card">
-                <h3 class="card-title"><i class="fas fa-list"></i> Список тарифов</h3>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Оператор</th>
-                                <th>Интернет</th>
-                                <th>Минуты</th>
-                                <th>Цена</th>
-                                <th>Значок</th>
-                                <th>Действия</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tariffsTableBody">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            
-            <!-- Модальное окно редактирования тарифа -->
-            <div id="editTariffModal" class="modal">
-                <div class="modal-content">
-                    <h3 class="card-title"><i class="fas fa-edit"></i> Редактирование тарифа</h3>
-                    <input type="hidden" id="editTariffIndex">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Название оператора</label>
-                            <input type="text" id="editTariffOperator">
-                        </div>
-                        <div class="form-group">
-                            <label>Цена</label>
-                            <input type="text" id="editTariffPrice">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Интернет трафик</label>
-                            <input type="text" id="editTariffData">
-                        </div>
-                        <div class="form-group">
-                            <label>Минуты</label>
-                            <input type="text" id="editTariffMinutes">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Значок</label>
-                            <select id="editTariffBadge">
-                                <option value="">Без значка</option>
-                                <option value="vip">VIP</option>
-                                <option value="hot">HOT</option>
-                                <option value="hit">HIT</option>
-                                <option value="sale">SALE</option>
-                                <option value="new">NEW</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Описание</label>
-                            <input type="text" id="editTariffDescription">
-                        </div>
-                    </div>
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn btn-primary" onclick="saveTariffEdit()">
-                            <i class="fas fa-save"></i> Сохранить
-                        </button>
-                        <button class="btn btn-secondary" onclick="closeTariffEditModal()">
+                        <button class="btn btn-secondary" onclick="closeEditModal()">
                             <i class="fas fa-times"></i> Отмена
                         </button>
                     </div>
@@ -860,40 +665,124 @@
             </div>
         </div>
 
-        <!-- Вкладка экспорта -->
-        <div id="export" class="tab-content">
+        <!-- Вкладка тарифов -->
+        <div id="tariffs" class="tab-content">
             <div class="card">
-                <h3 class="card-title"><i class="fas fa-server"></i> Автоматическое сохранение</h3>
-                <p style="color: #aaa; margin-bottom: 20px;">
-                    Все изменения автоматически сохраняются в LocalStorage браузера
-                </p>
-                <div class="export-section">
-                    <button class="btn btn-primary" onclick="saveToLocalStorage()">
-                        <i class="fas fa-save"></i> Сохранить в LocalStorage
+                <h3 class="card-title"><i class="fas fa-plus"></i> Добавить тариф</h3>
+                <form id="addTariffForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Оператор</label>
+                            <input type="text" id="tariffOperator" placeholder="МТС, Beeline, МЕГАФОН..." required>
+                        </div>
+                        <div class="form-group">
+                            <label>Интернет (ГБ)</label>
+                            <input type="text" id="tariffData" placeholder="50 ГБ" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Минуты</label>
+                            <input type="text" id="tariffMinutes" placeholder="1500 мин." required>
+                        </div>
+                        <div class="form-group">
+                            <label>Цена</label>
+                            <input type="text" id="tariffPrice" placeholder="399 ₽/мес." required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Значок (badge)</label>
+                        <select id="tariffBadge">
+                            <option value="">Без значка</option>
+                            <option value="vip">VIP</option>
+                            <option value="hit">HIT</option>
+                            <option value="sale">SALE</option>
+                            <option value="new">NEW</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Добавить тариф
                     </button>
-                    <button class="btn btn-secondary" onclick="clearLocalStorage()">
-                        <i class="fas fa-trash"></i> Очистить LocalStorage
-                    </button>
-                </div>
-                <div class="upload-instructions" style="margin-top: 20px; padding: 15px; background: rgba(255,215,0,0.05); border-radius: 8px; border: 1px solid rgba(255,215,0,0.1);">
-                    <h4 style="color: #FFD700; margin-bottom: 10px; font-size: 14px;"><i class="fas fa-info-circle"></i> Информация:</h4>
-                    <p style="color: #aaa; font-size: 13px; line-height: 1.6;">
-                        Данные сохраняются в браузере. При переходе на главную страницу сайта будут загружены последние сохранённые данные.
-                    </p>
-                </div>
+                </form>
             </div>
 
             <div class="card">
-                <h3 class="card-title"><i class="fas fa-download"></i> Резервное копирование</h3>
+                <h3 class="card-title"><i class="fas fa-sim-card"></i> Список тарифов</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Оператор</th>
+                                <th>Интернет</th>
+                                <th>Минуты</th>
+                                <th>Цена</th>
+                                <th>Значок</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tariffsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Модальное окно редактирования тарифа -->
+            <div id="editTariffModal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <h3 class="card-title"><i class="fas fa-edit"></i> Редактирование тарифа</h3>
+                    <input type="hidden" id="editTariffIndex">
+                    <div class="form-group">
+                        <label>Оператор</label>
+                        <input type="text" id="editTariffOperator">
+                    </div>
+                    <div class="form-group">
+                        <label>Интернет</label>
+                        <input type="text" id="editTariffData">
+                    </div>
+                    <div class="form-group">
+                        <label>Минуты</label>
+                        <input type="text" id="editTariffMinutes">
+                    </div>
+                    <div class="form-group">
+                        <label>Цена</label>
+                        <input type="text" id="editTariffPrice">
+                    </div>
+                    <div class="form-group">
+                        <label>Значок</label>
+                        <select id="editTariffBadge">
+                            <option value="">Без значка</option>
+                            <option value="vip">VIP</option>
+                            <option value="hit">HIT</option>
+                            <option value="sale">SALE</option>
+                            <option value="new">NEW</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" onclick="saveTariffEdit()">
+                            <i class="fas fa-save"></i> Сохранить
+                        </button>
+                        <button class="btn btn-secondary" onclick="closeEditTariffModal()">
+                            <i class="fas fa-times"></i> Отмена
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Вкладка экспорта -->
+        <div id="export" class="tab-content">
+            <div class="card">
+                <h3 class="card-title"><i class="fas fa-download"></i> Экспорт данных</h3>
                 <p style="color: #aaa; margin-bottom: 20px;">
-                    Скачайте копию данных для резервного хранения
+                    Скачайте текущие данные в формате JavaScript для замены файла data.js
                 </p>
                 <div class="export-section">
                     <button class="btn btn-primary" onclick="exportData()">
                         <i class="fas fa-download"></i> Скачать data.js
                     </button>
                     <button class="btn btn-secondary" onclick="copyToClipboard()">
-                        <i class="fas fa-copy"></i> Копировать код
+                        <i class="fas fa-copy"></i> Копировать в буфер
                     </button>
                 </div>
             </div>
@@ -901,116 +790,83 @@
             <div class="card">
                 <h3 class="card-title"><i class="fas fa-upload"></i> Импорт данных</h3>
                 <p style="color: #aaa; margin-bottom: 20px;">
-                    Загрузите существующий файл data.js для редактирования данных
+                    Загрузите файл data.js для импорта данных
                 </p>
-                <div class="file-upload-area" id="dropArea" onclick="document.getElementById('importFile').click()">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <p>Перетащите файл data.js сюда или нажмите для выбора</p>
-                    <p style="font-size: 12px; color: #888;">Поддерживается только формат .js</p>
+                <div class="form-group">
+                    <input type="file" id="importFile" accept=".js" style="display: none;">
+                    <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">
+                        <i class="fas fa-upload"></i> Выбрать файл
+                    </button>
                 </div>
-                <input type="file" id="importFile" accept=".js" style="display: none;" onchange="handleFileImport(this.files[0])">
             </div>
 
             <div class="card">
-                <h3 class="card-title"><i class="fas fa-code"></i> Предпросмотр данных</h3>
-                <pre id="dataPreview" style="background: #0f0f23; padding: 20px; border-radius: 8px; overflow-x: auto; font-size: 12px; max-height: 400px; overflow-y: auto; font-family: 'Consolas', 'Monaco', monospace; line-height: 1.4;"></pre>
+                <h3 class="card-title"><i class="fas fa-code"></i> Предпросмотр data.js</h3>
+                <pre id="dataPreview" style="background: #0f0f23; padding: 20px; border-radius: 8px; overflow-x: auto; font-size: 12px; max-height: 400px; overflow-y: auto;"></pre>
             </div>
         </div>
     </div>
 
+    <script src="data.js"></script>
     <script>
-        // Локальные данные из LocalStorage или начальные
-        let localMasksData = [];
-        let localNumbersData = [];
-        let localTariffsData = [];
-        let localTelegramAccount = "ne_kaktus";
+        // Локальные копии данных
+        let localMasksData = [...masksData];
+        let localNumbersData = [...numbersData];
+        let localTariffsData = [...tariffsData];
 
-        // Функции для работы с LocalStorage
-        function saveToLocalStorage() {
-            localStorage.setItem('bestnomer_masks', JSON.stringify(localMasksData));
-            localStorage.setItem('bestnomer_numbers', JSON.stringify(localNumbersData));
-            localStorage.setItem('bestnomer_tariffs', JSON.stringify(localTariffsData));
-            localStorage.setItem('bestnomer_telegram', localTelegramAccount);
-            showAlert('Данные сохранены в LocalStorage!', 'success');
-            console.log('Данные сохранены в LocalStorage');
-        }
-
-        function loadFromLocalStorage() {
+        // Загрузка из localStorage (с проверкой актуальности данных)
+        function loadFromStorage() {
             const savedMasks = localStorage.getItem('bestnomer_masks');
             const savedNumbers = localStorage.getItem('bestnomer_numbers');
             const savedTariffs = localStorage.getItem('bestnomer_tariffs');
-            const savedTelegram = localStorage.getItem('bestnomer_telegram');
             
             if (savedMasks) {
-                try {
-                    localMasksData = JSON.parse(savedMasks);
-                } catch(e) { 
-                    console.error('Ошибка загрузки масок:', e);
-                    localMasksData = [];
-                }
+                localMasksData = JSON.parse(savedMasks);
             }
-            
             if (savedNumbers) {
-                try {
-                    localNumbersData = JSON.parse(savedNumbers);
-                } catch(e) { 
-                    console.error('Ошибка загрузки номеров:', e);
-                    localNumbersData = [];
+                const parsed = JSON.parse(savedNumbers);
+                if (parsed.length > 0 && parsed[0].price !== undefined) {
+                    localNumbersData = parsed;
+                } else {
+                    saveToStorage();
                 }
             }
-            
             if (savedTariffs) {
-                try {
-                    localTariffsData = JSON.parse(savedTariffs);
-                } catch(e) { 
-                    console.error('Ошибка загрузки тарифов:', e);
-                    localTariffsData = [];
+                const parsed = JSON.parse(savedTariffs);
+                if (parsed.length > 0 && parsed[0].badge !== undefined) {
+                    localTariffsData = parsed;
+                } else {
+                    saveToStorage();
                 }
             }
-            
-            if (savedTelegram) {
-                localTelegramAccount = savedTelegram;
-            }
-            
-            console.log('Данные загружены из LocalStorage:', {
-                masks: localMasksData.length,
-                numbers: localNumbersData.length,
-                tariffs: localTariffsData.length
-            });
         }
 
-        function clearLocalStorage() {
-            if (confirm('Очистить все данные из LocalStorage? Это действие нельзя отменить.')) {
-                localStorage.removeItem('bestnomer_masks');
-                localStorage.removeItem('bestnomer_numbers');
-                localStorage.removeItem('bestnomer_tariffs');
-                localStorage.removeItem('bestnomer_telegram');
-                
-                // Сбрасываем локальные данные
-                localMasksData = [];
-                localNumbersData = [];
-                localTariffsData = [];
-                
-                renderAll();
-                showAlert('LocalStorage очищен!', 'success');
-            }
+        // Сохранение в localStorage
+        function saveToStorage() {
+            localStorage.setItem('bestnomer_masks', JSON.stringify(localMasksData));
+            localStorage.setItem('bestnomer_numbers', JSON.stringify(localNumbersData));
+            localStorage.setItem('bestnomer_tariffs', JSON.stringify(localTariffsData));
         }
 
-        // Функции для работы с данными
+        // Показать уведомление
         function showAlert(message, type = 'success') {
             const alert = document.getElementById('alert');
             alert.className = `alert alert-${type}`;
             alert.textContent = message;
             alert.style.display = 'block';
-            setTimeout(() => alert.style.display = 'none', 3000);
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 3000);
         }
 
+        // Обновить статистику
         function updateStats() {
             document.getElementById('totalNumbers').textContent = localNumbersData.length;
             document.getElementById('totalMasks').textContent = localMasksData.length;
             document.getElementById('totalTariffs').textContent = localTariffsData.length;
         }
 
+        // Обновить выпадающий список масок
         function updateMaskSelect() {
             const select = document.getElementById('numberMask');
             select.innerHTML = '<option value="">Выберите маску</option>';
@@ -1037,7 +893,7 @@
                         <td><span class="badge badge-mask">${maskName}</span></td>
                         <td>${badgeHTML}</td>
                         <td class="actions">
-                            <button class="btn btn-secondary btn-sm" onclick="openNumberEditModal(${index})" title="Редактировать">
+                            <button class="btn btn-secondary btn-sm" onclick="openEditModal(${index})" title="Редактировать">
                                 <i class="fas fa-edit"></i>
                             </button>
                             <button class="btn btn-danger btn-sm" onclick="deleteNumber(${index})" title="Удалить">
@@ -1049,34 +905,7 @@
             });
         }
 
-        function renderTariffsTable() {
-            const tbody = document.getElementById('tariffsTableBody');
-            tbody.innerHTML = '';
-            
-            localTariffsData.forEach((tariff, index) => {
-                const badgeHTML = tariff.badge ? `<span class="badge badge-${tariff.badge}">${tariff.badge.toUpperCase()}</span>` : '-';
-                
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${tariff.id}</td>
-                        <td><strong>${tariff.operator || '-'}</strong></td>
-                        <td>${tariff.data || '-'}</td>
-                        <td>${tariff.minutes || '-'}</td>
-                        <td>${tariff.price || '-'}</td>
-                        <td>${badgeHTML}</td>
-                        <td class="actions">
-                            <button class="btn btn-secondary btn-sm" onclick="openTariffEditModal(${index})" title="Редактировать">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteTariff(${index})" title="Удалить">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
+        // Отрисовка таблицы масок
         function renderMasksTable() {
             const tbody = document.getElementById('masksTableBody');
             tbody.innerHTML = '';
@@ -1126,48 +955,13 @@
                 badge: badge
             });
             
-            saveToLocalStorage();
-            renderAll();
+            saveToStorage();
+            renderNumbersTable();
+            updateStats();
+            updateDataPreview();
             
             this.reset();
             showAlert('Номер добавлен успешно!');
-        });
-
-        // Добавить тариф
-        document.getElementById('addTariffForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const operator = document.getElementById('tariffOperator').value.trim();
-            const price = document.getElementById('tariffPrice').value.trim();
-            const data = document.getElementById('tariffData').value.trim();
-            const minutes = document.getElementById('tariffMinutes').value.trim();
-            const badge = document.getElementById('tariffBadge').value;
-            const description = document.getElementById('tariffDescription').value.trim();
-            
-            if (!operator || !price || !data || !minutes) {
-                showAlert('Заполните обязательные поля', 'error');
-                return;
-            }
-            
-            const newId = localTariffsData.length > 0 
-                ? Math.max(...localTariffsData.map(t => t.id)) + 1 
-                : 1;
-            
-            localTariffsData.push({
-                id: newId,
-                operator: operator,
-                price: price,
-                data: data,
-                minutes: minutes,
-                badge: badge,
-                description: description
-            });
-            
-            saveToLocalStorage();
-            renderAll();
-            
-            this.reset();
-            showAlert('Тариф добавлен успешно!');
         });
 
         // Добавить маску
@@ -1194,8 +988,11 @@
                 description: description
             });
             
-            saveToLocalStorage();
-            renderAll();
+            saveToStorage();
+            renderMasksTable();
+            updateMaskSelect();
+            updateStats();
+            updateDataPreview();
             
             this.reset();
             showAlert('Маска добавлена успешно!');
@@ -1205,21 +1002,15 @@
         function deleteNumber(index) {
             if (confirm('Удалить этот номер?')) {
                 localNumbersData.splice(index, 1);
-                saveToLocalStorage();
-                renderAll();
+                saveToStorage();
+                renderNumbersTable();
+                updateStats();
+                updateDataPreview();
                 showAlert('Номер удалён');
             }
         }
 
-        function deleteTariff(index) {
-            if (confirm('Удалить этот тариф?')) {
-                localTariffsData.splice(index, 1);
-                saveToLocalStorage();
-                renderAll();
-                showAlert('Тариф удалён');
-            }
-        }
-
+        // Удалить маску
         function deleteMask(index) {
             const mask = localMasksData[index];
             const count = localNumbersData.filter(n => n.mask === mask.id).length;
@@ -1231,33 +1022,147 @@
             
             if (confirm('Удалить эту маску?')) {
                 localMasksData.splice(index, 1);
-                saveToLocalStorage();
-                renderAll();
+                saveToStorage();
+                renderMasksTable();
+                updateMaskSelect();
+                updateStats();
+                updateDataPreview();
                 showAlert('Маска удалена');
             }
         }
 
-        // Генерация файла data.js
+        // Отрисовка таблицы тарифов
+        function renderTariffsTable() {
+            const tbody = document.getElementById('tariffsTableBody');
+            tbody.innerHTML = '';
+            
+            localTariffsData.forEach((tariff, index) => {
+                const badgeHTML = tariff.badge ? `<span class="badge badge-${tariff.badge}">${tariff.badge.toUpperCase()}</span>` : '-';
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${tariff.id}</td>
+                        <td><strong>${tariff.operator}</strong></td>
+                        <td>${tariff.data}</td>
+                        <td>${tariff.minutes}</td>
+                        <td>${tariff.price}</td>
+                        <td>${badgeHTML}</td>
+                        <td class="actions">
+                            <button class="btn btn-secondary btn-sm" onclick="openEditTariffModal(${index})" title="Редактировать">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteTariff(${index})" title="Удалить">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Добавить тариф
+        document.getElementById('addTariffForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const operator = document.getElementById('tariffOperator').value.trim();
+            const data = document.getElementById('tariffData').value.trim();
+            const minutes = document.getElementById('tariffMinutes').value.trim();
+            const price = document.getElementById('tariffPrice').value.trim();
+            const badge = document.getElementById('tariffBadge').value;
+            
+            if (!operator || !data || !minutes || !price) {
+                showAlert('Заполните все обязательные поля', 'error');
+                return;
+            }
+            
+            const newId = localTariffsData.length > 0 
+                ? Math.max(...localTariffsData.map(t => t.id)) + 1 
+                : 1;
+            
+            localTariffsData.push({
+                id: newId,
+                operator: operator,
+                data: data,
+                minutes: minutes,
+                price: price,
+                badge: badge || ''
+            });
+            
+            saveToStorage();
+            renderTariffsTable();
+            updateStats();
+            updateDataPreview();
+            
+            this.reset();
+            showAlert('Тариф добавлен успешно!');
+        });
+
+        // Удалить тариф
+        function deleteTariff(index) {
+            if (confirm('Удалить этот тариф?')) {
+                localTariffsData.splice(index, 1);
+                saveToStorage();
+                renderTariffsTable();
+                updateStats();
+                updateDataPreview();
+                showAlert('Тариф удалён');
+            }
+        }
+
+        // Открыть модальное окно редактирования тарифа
+        function openEditTariffModal(index) {
+            const tariff = localTariffsData[index];
+            document.getElementById('editTariffIndex').value = index;
+            document.getElementById('editTariffOperator').value = tariff.operator;
+            document.getElementById('editTariffData').value = tariff.data;
+            document.getElementById('editTariffMinutes').value = tariff.minutes;
+            document.getElementById('editTariffPrice').value = tariff.price;
+            document.getElementById('editTariffBadge').value = tariff.badge || '';
+            
+            document.getElementById('editTariffModal').style.display = 'flex';
+        }
+
+        // Закрыть модальное окно редактирования тарифа
+        function closeEditTariffModal() {
+            document.getElementById('editTariffModal').style.display = 'none';
+        }
+
+        // Сохранить изменения тарифа
+        function saveTariffEdit() {
+            const index = parseInt(document.getElementById('editTariffIndex').value);
+            
+            localTariffsData[index].operator = document.getElementById('editTariffOperator').value;
+            localTariffsData[index].data = document.getElementById('editTariffData').value;
+            localTariffsData[index].minutes = document.getElementById('editTariffMinutes').value;
+            localTariffsData[index].price = document.getElementById('editTariffPrice').value;
+            localTariffsData[index].badge = document.getElementById('editTariffBadge').value || '';
+            
+            saveToStorage();
+            renderAll();
+            closeEditTariffModal();
+            showAlert('Тариф успешно обновлён!');
+        }
+
+        // Генерация data.js
         function generateDataJS() {
-            let output = `// Файл data.js для сайта Bestnomer.ru
-// Сгенерирован автоматически через админ-панель
-// Дата создания: ${new Date().toLocaleString('ru-RU')}
+            let output = `
+const masksData = ${JSON.stringify(localMasksData, null, 4)};
 
-const masksData = ${JSON.stringify(localMasksData, null, 2)};
+const numbersData = ${JSON.stringify(localNumbersData, null, 4)};
 
-const numbersData = ${JSON.stringify(localNumbersData, null, 2)};
+const tariffsData = ${JSON.stringify(localTariffsData, null, 4)};
 
-const tariffsData = ${JSON.stringify(localTariffsData, null, 2)};
-
-const TELEGRAM_ACCOUNT = "${localTelegramAccount}";
+const TELEGRAM_ACCOUNT = "${TELEGRAM_ACCOUNT}";
 `;
             return output;
         }
 
+        // Обновить предпросмотр
         function updateDataPreview() {
             document.getElementById('dataPreview').textContent = generateDataJS();
         }
 
+        // Экспорт данных
         function exportData() {
             const data = generateDataJS();
             const blob = new Blob([data], { type: 'text/javascript' });
@@ -1265,197 +1170,49 @@ const TELEGRAM_ACCOUNT = "${localTelegramAccount}";
             const a = document.createElement('a');
             a.href = url;
             a.download = 'data.js';
-            document.body.appendChild(a);
             a.click();
-            document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            showAlert('Файл data.js готов к скачиванию!');
+            showAlert('Файл data.js скачан!');
         }
 
+        // Копировать в буфер
         function copyToClipboard() {
             const data = generateDataJS();
             navigator.clipboard.writeText(data).then(() => {
-                showAlert('Код скопирован в буфер обмена!');
+                showAlert('Скопировано в буфер обмена!');
             });
         }
 
-        function handleFileImport(file) {
-            if (!file || !file.name.endsWith('.js')) {
-                showAlert('Пожалуйста, выберите файл data.js', 'error');
-                return;
-            }
+        // Импорт файла
+        document.getElementById('importFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
             
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const content = e.target.result;
-                    
-                    // Пытаемся извлечь данные из файла
-                    const masksRegex = /const masksData\s*=\s*(\[[\s\S]*?\]);/m;
-                    const numbersRegex = /const numbersData\s*=\s*(\[[\s\S]*?\]);/m;
-                    const tariffsRegex = /const tariffsData\s*=\s*(\[[\s\S]*?\]);/m;
-                    const telegramRegex = /const TELEGRAM_ACCOUNT\s*=\s*"([^"]+)";/m;
-                    
-                    const masksMatch = content.match(masksRegex);
-                    const numbersMatch = content.match(numbersRegex);
-                    const tariffsMatch = content.match(tariffsRegex);
-                    const telegramMatch = content.match(telegramRegex);
+                    // Простой парсинг - ищем массивы
+                    const masksMatch = content.match(/const masksData = (\[[\s\S]*?\]);/);
+                    const numbersMatch = content.match(/const numbersData = (\[[\s\S]*?\]);/);
                     
                     if (masksMatch) {
-                        try {
-                            const masks = eval(masksMatch[1]);
-                            if (Array.isArray(masks)) {
-                                localMasksData = masks;
-                            }
-                        } catch(e) {
-                            console.error('Ошибка парсинга масок:', e);
-                        }
+                        localMasksData = eval(masksMatch[1]);
                     }
-                    
                     if (numbersMatch) {
-                        try {
-                            const numbers = eval(numbersMatch[1]);
-                            if (Array.isArray(numbers)) {
-                                localNumbersData = numbers;
-                            }
-                        } catch(e) {
-                            console.error('Ошибка парсинга номеров:', e);
-                        }
+                        localNumbersData = eval(numbersMatch[1]);
                     }
                     
-                    if (tariffsMatch) {
-                        try {
-                            const tariffs = eval(tariffsMatch[1]);
-                            if (Array.isArray(tariffs)) {
-                                localTariffsData = tariffs;
-                            }
-                        } catch(e) {
-                            console.error('Ошибка парсинга тарифов:', e);
-                        }
-                    }
-                    
-                    if (telegramMatch) {
-                        localTelegramAccount = telegramMatch[1];
-                    }
-                    
-                    saveToLocalStorage();
+                    saveToStorage();
                     renderAll();
                     showAlert('Данные импортированы успешно!');
-                    
                 } catch (err) {
-                    console.error('Ошибка при импорте файла:', err);
-                    showAlert('Ошибка при импорте файла. Проверьте формат файла.', 'error');
+                    showAlert('Ошибка при импорте файла', 'error');
+                    console.error(err);
                 }
             };
             reader.readAsText(file);
-        }
-
-        // Редактирование номеров и тарифов
-        function openNumberEditModal(index) {
-            const num = localNumbersData[index];
-            document.getElementById('editNumberIndex').value = index;
-            document.getElementById('editNumberPhone').value = num.number;
-            document.getElementById('editNumberPrice').value = num.price || '';
-            document.getElementById('editNumberBadge').value = num.badge || '';
-            
-            const editMask = document.getElementById('editNumberMask');
-            editMask.innerHTML = '';
-            localMasksData.forEach(mask => {
-                editMask.innerHTML += `<option value="${mask.id}" ${mask.id === num.mask ? 'selected' : ''}>${mask.name}</option>`;
-            });
-            
-            document.getElementById('editNumberModal').style.display = 'flex';
-        }
-
-        function closeNumberEditModal() {
-            document.getElementById('editNumberModal').style.display = 'none';
-        }
-
-        function saveNumberEdit() {
-            const index = parseInt(document.getElementById('editNumberIndex').value);
-            
-            localNumbersData[index].number = document.getElementById('editNumberPhone').value;
-            localNumbersData[index].price = document.getElementById('editNumberPrice').value;
-            localNumbersData[index].mask = document.getElementById('editNumberMask').value;
-            localNumbersData[index].badge = document.getElementById('editNumberBadge').value || null;
-            
-            saveToLocalStorage();
-            renderAll();
-            closeNumberEditModal();
-            
-            showAlert('Номер успешно обновлён!');
-        }
-
-        function openTariffEditModal(index) {
-            const tariff = localTariffsData[index];
-            document.getElementById('editTariffIndex').value = index;
-            document.getElementById('editTariffOperator').value = tariff.operator || '';
-            document.getElementById('editTariffPrice').value = tariff.price || '';
-            document.getElementById('editTariffData').value = tariff.data || '';
-            document.getElementById('editTariffMinutes').value = tariff.minutes || '';
-            document.getElementById('editTariffBadge').value = tariff.badge || '';
-            document.getElementById('editTariffDescription').value = tariff.description || '';
-            
-            document.getElementById('editTariffModal').style.display = 'flex';
-        }
-
-        function closeTariffEditModal() {
-            document.getElementById('editTariffModal').style.display = 'none';
-        }
-
-        function saveTariffEdit() {
-            const index = parseInt(document.getElementById('editTariffIndex').value);
-            
-            localTariffsData[index].operator = document.getElementById('editTariffOperator').value;
-            localTariffsData[index].price = document.getElementById('editTariffPrice').value;
-            localTariffsData[index].data = document.getElementById('editTariffData').value;
-            localTariffsData[index].minutes = document.getElementById('editTariffMinutes').value;
-            localTariffsData[index].badge = document.getElementById('editTariffBadge').value;
-            localTariffsData[index].description = document.getElementById('editTariffDescription').value;
-            
-            saveToLocalStorage();
-            renderAll();
-            closeTariffEditModal();
-            
-            showAlert('Тариф успешно обновлён!');
-        }
-
-        function renderAll() {
-            renderNumbersTable();
-            renderTariffsTable();
-            renderMasksTable();
-            updateMaskSelect();
-            updateStats();
-            updateDataPreview();
-        }
-
-        // Drag and drop для импорта файла
-        const dropArea = document.getElementById('dropArea');
-        if (dropArea) {
-            dropArea.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                dropArea.style.borderColor = '#FFD700';
-                dropArea.style.background = 'rgba(255, 215, 0, 0.05)';
-            });
-
-            dropArea.addEventListener('dragleave', () => {
-                dropArea.style.borderColor = 'rgba(255, 215, 0, 0.3)';
-                dropArea.style.background = '';
-            });
-
-            dropArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                dropArea.style.borderColor = 'rgba(255, 215, 0, 0.3)';
-                dropArea.style.background = '';
-                
-                const file = e.dataTransfer.files[0];
-                if (file && file.name.endsWith('.js')) {
-                    handleFileImport(file);
-                } else {
-                    showAlert('Пожалуйста, перетащите файл data.js', 'error');
-                }
-            });
-        }
+        });
 
         // Переключение вкладок
         document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -1498,8 +1255,56 @@ const TELEGRAM_ACCOUNT = "${localTelegramAccount}";
             });
         }
 
+        // Открыть модальное окно редактирования
+        function openEditModal(index) {
+            const num = localNumbersData[index];
+            document.getElementById('editIndex').value = index;
+            document.getElementById('editPhone').value = num.number;
+            document.getElementById('editPrice').value = num.price || '';
+            document.getElementById('editBadge').value = num.badge || '';
+            
+            // Заполняем выпадающий список масок
+            const editMask = document.getElementById('editMask');
+            editMask.innerHTML = '';
+            localMasksData.forEach(mask => {
+                editMask.innerHTML += `<option value="${mask.id}" ${mask.id === num.mask ? 'selected' : ''}>${mask.name}</option>`;
+            });
+            
+            document.getElementById('editModal').style.display = 'flex';
+        }
+
+        // Закрыть модальное окно
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        // Сохранить изменения
+        function saveEdit() {
+            const index = parseInt(document.getElementById('editIndex').value);
+            
+            localNumbersData[index].number = document.getElementById('editPhone').value;
+            localNumbersData[index].price = document.getElementById('editPrice').value;
+            localNumbersData[index].mask = document.getElementById('editMask').value;
+            localNumbersData[index].badge = document.getElementById('editBadge').value || null;
+            
+            saveToStorage();
+            renderAll();
+            closeEditModal();
+            showAlert('Номер успешно обновлён!');
+        }
+
+        // Отрисовать всё
+        function renderAll() {
+            renderNumbersTable();
+            renderMasksTable();
+            renderTariffsTable();
+            updateMaskSelect();
+            updateStats();
+            updateDataPreview();
+        }
+
         // Инициализация
-        loadFromLocalStorage();
+        loadFromStorage();
         renderAll();
     </script>
 </body>
